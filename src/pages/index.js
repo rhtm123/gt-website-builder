@@ -1,120 +1,160 @@
-// pages/index.js
-import React from 'react';
-import DomRenderer from '@/components/DomRenderer';
-import { useDomContext } from '@/context/DomContext';
-import StyleHandler from '@/components/StyleHandler';
+import Link from "next/link"
 
 
-const InsertButtonComponent = () => {
-  const { domJson, dispatch } = useDomContext();
-
-  const insertButtonInDiv = (targetId) => {
-
-    const newElement = {
-      type: 'p',
-      id: `${new Date().getTime()}`,
-      attributes: { className: 'new-element-after' },
-      styles: { bg: 'bg-new-after' },
-      children: [{ type: 'text', id: 'new-text-after', value: 'New Element After' }],
-    };
-
-    dispatch({
-      type: 'ADD_ELEMENT_AFTER',
-      payload: { id: targetId, newElement },
-    });
-  
-  };
-
-  return (
-    <button className='btn btn-primary' onClick={() => insertButtonInDiv('4')}>
-      Insert Button in Div
-    </button>
-  );
-};
-
-
-const jsonToHtml = (element) => {
-  const { type, attributes, children, value, styles } = element;
-
-  if (type === 'text') {
-    return value; // Directly return text node value
-  }
-
-  // Convert styles object to a className string
-  const styleClassName = Object.values(styles || {}).join(' ');
-
-  // Merge styles and existing className attributes
-  const combinedClassName = [attributes?.className, styleClassName]
-    .filter(Boolean)
-    .join(' ');
-
-  // Construct opening tag with combined attributes
-  const attributesString = Object.entries({ ...attributes, className: combinedClassName })
-    .filter(([key, val]) => val) // Ensure no empty attributes
-    .map(([key, val]) => `${key}="${val}"`)
-    .join(' ');
-
-  // Recursively build children HTML
-  const childrenHtml = (children || []).map(jsonToHtml).join('');
-
-  // Return complete element HTML
-  return `<${type} ${attributesString}>${childrenHtml}</${type}>`;
-};
-
-
-const GenerateHtmlButton = () => {
-  const { domJson } = useDomContext();
-
-  const generateHtml = () => {
-    // Generate HTML from the JSON structure
-    const htmlString = jsonToHtml(domJson);
-
-    // Display the HTML in a <pre> tag or console
-    console.log(htmlString);
-    // alert("HTML has been generated. Check the console or download the file.");
-
-    // Optionally download as a file
-    // const blob = new Blob([htmlString], { type: 'text/html' });
-    // const url = URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = url;
-    // a.download = 'output.html';
-    // a.click();
-    // URL.revokeObjectURL(url);
-  };
-
-  return <button onClick={generateHtml}>Generate HTML</button>;
-};
-
-
-
-
-
-
-const Home = () => {
+export default function HomePage(){
 
   return(
-    <div className='grid md:grid-cols-6 md:gap-4'>
 
-      <div className='col-span-1'>
-        <InsertButtonComponent />
+<div className="bg-base-100 dark:bg-gray-900">
+  {/* Hero Section */}
+  <section className="py-24 md:py-36 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
+            Build Websites Effortlessly
+          </h1>
+          <p className="text-xl md:text-2xl text-white mb-10">
+            Experience the power of our website builder, designed for developers who love Tailwind CSS.
+          </p>
+          <Link href={"/projects"}>
+          <button className="btn btn-accent btn-lg shadow-lg transform hover:scale-105 transition-transform">
+            Get Started Now
+          </button>
+          </Link>
+        </div>
+        <div className="hidden md:block">
+          <img
+            src="/img/website.jpg"
+            alt="Website Builder"
+            className="rounded-lg shadow-2xl"
+          />
+        </div>
       </div>
-
-      <div className='col-span-4'>
-        <GenerateHtmlButton />
-        <DomRenderer />
-
-      </div>
-
-      <div className='col-span-1'>
-        Styles
-
-        <StyleHandler />
-
-      </div>
-      
     </div>
-  );
-};
+  </section>
 
-export default Home;
+  {/* Features Section */}
+  <section className="py-24 md:py-36">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-4xl md:text-5xl font-extrabold mb-16 text-center">
+        Key Features
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        {/* Feature 1 */}
+        
+        {/* Feature 2 */}
+        <div className="card bg-base-200 shadow-xl p-8 transform hover:-translate-y-2 transition-transform">
+          <div className="flex items-center mb-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-10 h-10 text-primary mr-4"
+            >
+              <rect width="18" height="7" x="3" y="3" rx="1"></rect>
+              <rect width="9" height="7" x="3" y="14" rx="1"></rect>
+              <rect width="5" height="7" x="16" y="14" rx="1"></rect>
+            </svg>
+            <h3 className="text-2xl font-bold">Pre-built Templates</h3>
+          </div>
+          <p className="text-lg text-neutral-content">
+            Start fast with a range of beautiful templates designed for different needs.
+          </p>
+        </div>
+        {/* Feature 3 */}
+        <div className="card bg-base-200 shadow-xl p-8 transform hover:-translate-y-2 transition-transform">
+          <div className="flex items-center mb-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-10 h-10 text-primary mr-4"
+            >
+              <path d="M5 12s2.545-5 7-5c4.454 0 7 5 7 5s-2.546 5-7 5c-4.455 0-7-5-7-5z"></path>
+              <path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
+              <path d="M21 17v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2"></path>
+              <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"></path>
+            </svg>
+            <h3 className="text-2xl font-bold">Real-time Preview</h3>
+          </div>
+          <p className="text-lg text-neutral-content">
+            Watch your website come to life with instant updates as you make changes.
+          </p>
+        </div>
+
+        <div className="card bg-base-200 shadow-xl p-8 transform hover:-translate-y-2 transition-transform">
+          <div className="flex items-center mb-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-10 h-10 text-primary mr-4"
+            >
+              <path d="M2 2l8 8"></path>
+              <path d="M22 2l-8 8"></path>
+              <ellipse cx="12" cy="9" rx="10" ry="5"></ellipse>
+              <path d="M7 13.4v7.9"></path>
+              <path d="M12 14v8"></path>
+              <path d="M17 13.4v7.9"></path>
+              <path d="M2 9v8a10 5 0 0020 0V9"></path>
+            </svg>
+            <h3 className="text-2xl font-bold">Drag-and-Drop Interface</h3>
+          </div>
+          <p className="text-lg text-neutral-content">
+            Seamlessly create your website by dragging and dropping elements into place.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Call to Action Section */}
+  <section className="py-24 md:py-36 bg-neutral">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-base-content">
+            Join Thousands of Developers
+          </h2>
+          <p className="text-xl text-neutral-content mb-8">
+            Sign up now and start building websites like a pro.
+          </p>
+            
+            <button className="btn btn-primary">
+              Join Discord
+            </button>
+        </div>
+        <div className="hidden md:block">
+          <img
+            src="/img/developer.jpg"
+            alt="Customer Feedback"
+            className="rounded-lg shadow-2xl"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+  
+  )
+}

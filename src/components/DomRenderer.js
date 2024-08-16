@@ -2,15 +2,15 @@ import React from 'react';
 import { useDomContext } from '@/context/DomContext';
 import { useElementStyleContext } from '@/context/ElementStyleContext';
 
-const renderElement = (element) => {
-  const { type, attributes, children, value, id, styles } = element;
+// Ensure hooks are used only at the top level
+const DomRenderer = () => {
   const { domJson, dispatch } = useDomContext();
   const { elementState, setElementState } = useElementStyleContext();
 
   // Handle click events to update style
   const handleElementClick = (event, elementId) => {
     event.stopPropagation();
-    
+
     // Deep clone the existing DOM JSON
     const updatedDomJson = JSON.parse(JSON.stringify(domJson));
 
@@ -35,38 +35,46 @@ const renderElement = (element) => {
     });
   };
 
-  // Combine styles into a single className string
-  const className = Object.values(styles || {}).join(' ');
-
-  // Combine styles and existing className attributes
-  const combinedAttributes = {
-    ...attributes,
-    className: [attributes?.className, className].filter(Boolean).join(' '),
-    onClick: (e) => handleElementClick(e, id),
+  // Render each element
+  
+  const renderElement = (element) => {
+    const { type, attributes, children, value, id, styles } = element;
+  
+    // Combine styles into a single className string
+    const className = Object.values(styles || {}).join(' ');
+  
+    // Combine styles and existing className attributes
+    const combinedAttributes = {
+      ...attributes,
+      className: [attributes?.class, className].filter(Boolean).join(' '),
+      onClick: (e) => handleElementClick(e, id),
+    };
+  
+    // Special handling for text type to allow editing
+    if (type === 'text') {
+      return (
+        <span
+          key={id}
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => handleTextChange(e, id)}
+        >
+          {value}
+        </span>
+      );
+    }
+  
+    // Handle image tag separately
+    if (type === 'img') {
+      return React.createElement(type, { key: id, ...attributes });
+    }
+  
+    // Recursively render children elements
+    const childrenElements = children?.map(renderElement);
+  
+    return React.createElement(type, { key: id, ...combinedAttributes }, childrenElements);
   };
 
-  // Special handling for text type to allow editing
-  if (type === 'text') {
-    return (
-      <span
-        key={id}
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => handleTextChange(e, id)}
-      >
-        {value}
-      </span>
-    );
-  }
-
-  // Recursively render children elements
-  const childrenElements = children?.map(renderElement);
-
-  return React.createElement(type, { key: id, ...combinedAttributes }, childrenElements);
-};
-
-const DomRenderer = () => {
-  const { domJson } = useDomContext();
   return <>{renderElement(domJson)}</>;
 };
 
