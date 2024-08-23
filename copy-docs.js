@@ -3,7 +3,7 @@ const path = require('path');
 
 // Define source and destination directories
 const sourceDir = path.join(__dirname, 'docs-site/build');
-const destDir = path.join(__dirname, 'public/docs');
+const destDir = path.join(__dirname, 'public/v1');
 
 // Function to copy files
 const copyFiles = async (source, destination) => {

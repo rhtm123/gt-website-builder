@@ -7,10 +7,11 @@ import { useRef } from 'react';
 import { myFetch } from '@/utils/myFetch';
 import { useSession, signIn, signOut } from "next-auth/react";
 import LoginRequired from '@/components/LoginRequired';
-import LazyLoadStyles from '@/components/LazyLoadStyles';
 import Link from 'next/link';
 
 import AlertContainer from '@/components/AlertContainer';
+
+import Head from 'next/head';
 
 
 const InsertButtonComponent = () => {
@@ -97,6 +98,7 @@ const GenerateHtmlButton = () => {
   const generateHtml = () => {
     const htmlString = jsonToHtml(domJson);
     console.log(htmlString);
+    console.log(domJson);
   };
 
   return <button className="btn btn-secondary mt-4" onClick={generateHtml}>Generate HTML</button>;
@@ -110,6 +112,33 @@ const Project = ({ data, error }) => {
   const [trueCreator, setTrueCreator] = React.useState(true);
 
   const alertContainerRef = React.useRef();
+
+  const [isCssLoaded, setIsCssLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    const link = document.createElement('link');
+    link.href = "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
+    link.rel = "stylesheet";
+    link.onload = () => {
+      setIsCssLoaded(true);
+    };
+    link.async = true;
+    document.head.appendChild(link);
+  }, []);
+
+
+  // for daisyUI
+  React.useEffect(() => {
+    const link = document.createElement('link');
+    link.href = "https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css";
+    link.rel = "stylesheet";
+    link.onload = () => {
+      setIsCssLoaded(true);
+    };
+    link.async = true;
+    document.head.appendChild(link);
+  }, []);
+
 
 
 
@@ -153,10 +182,22 @@ const Project = ({ data, error }) => {
 
   return (
     <LoginRequired>
+
+
+      <div>
+        <h1 className="text-center text-2xl font-bold">Welcome to Your Page</h1>
+        {isCssLoaded ? (
+          <p className="text-center text-green-500">CSS has been loaded!</p>
+        ) : (
+          <p className="text-center text-red-500">Loading CSS...</p>
+        )}
+      </div>
+
+
       <AlertContainer ref={alertContainerRef} />
 
       <div className='grid md:grid-cols-6 gap-4 p-4'>
-        <LazyLoadStyles />
+
         <div className='col-span-1'>
           <InsertButtonComponent />
           

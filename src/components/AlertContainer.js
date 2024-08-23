@@ -34,4 +34,7 @@ const AlertContainer = forwardRef((props, ref) => {
   );
 });
 
+// Add displayName for debugging purposes
+AlertContainer.displayName = 'AlertContainer';
+
 export default AlertContainer;
