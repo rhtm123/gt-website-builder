@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDomContext } from '@/context/DomContext';
 import { useElementStyleContext } from '@/context/ElementStyleContext';
 
 const DomRenderer = () => {
   const { domJson, dispatch } = useDomContext();
   const { elementState, setElementState } = useElementStyleContext();
+  const [hoveredElementId, setHoveredElementId] = useState(null);
 
-  const handleElementClick = (event, elementId) => {
+  const handleElementClick = (event, elementId, parentElement = null) => {
     event.stopPropagation();
     const updatedDomJson = JSON.parse(JSON.stringify(domJson));
 
-    const findElement = (element) => {
+    const findElement = (element, parent = null) => {
       if (element.id === elementId) {
-        setElementState({ styles: element.styles, elementId: element.id });
+        if (element.type !== 'text') {
+          setElementState({ styles: element.styles, elementId: element.id });
+        } else if (parent) {
+          setElementState({ styles: parent.styles, elementId: parent.id });
+        }
       } else if (element.children) {
-        element.children.forEach(findElement);
+        element.children.forEach((child) => findElement(child, element));
       }
     };
 
-    findElement(updatedDomJson);
+    findElement(updatedDomJson, parentElement);
   };
 
   const handleTextChange = (e, targetId) => {
@@ -29,26 +34,47 @@ const DomRenderer = () => {
     });
   };
 
-  const renderElement = (element) => {
+  const renderElement = (element, parentElement = null) => {
     const { type, attributes, children, value, id, styles } = element;
 
-    const className = Object.values(styles || {}).join(' ');
+    const isSelected = elementState?.elementId === id;
+    const isHovered = hoveredElementId === id;
+
+    const borderClass = isSelected
+      ? 'border border-blue-500'
+      : isHovered
+      ? 'border border-blue-300'
+      : '';
+
+    const className = [Object.values(styles || {}).join(' '), borderClass].filter(Boolean).join(' ');
 
     const combinedAttributes = {
       ...attributes,
       className: [attributes?.class, className].filter(Boolean).join(' '),
-      onClick: (e) => handleElementClick(e, id),
+      onClick: (e) => handleElementClick(e, id, parentElement),
+      onMouseEnter: () => setHoveredElementId(id),
+      onMouseLeave: () => setHoveredElementId(null),
     };
 
     if (type === 'text') {
-      return value;  // Directly return the text value without wrapping it in any element
+      return (
+        <span
+          key={id}
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => handleTextChange(e, id)}
+          {...combinedAttributes}
+        >
+          {value}
+        </span>
+      );
     }
 
     if (type === 'img') {
       return React.createElement(type, { key: id, ...attributes });
     }
 
-    const childrenElements = children?.map(renderElement);
+    const childrenElements = children?.map((child) => renderElement(child, element));
 
     return React.createElement(type, { key: id, ...combinedAttributes }, childrenElements);
   };
