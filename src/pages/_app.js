@@ -20,7 +20,6 @@ function MyApp({ Component, pageProps }) {
       <ElementStyleProvider>
         <Component {...pageProps} />
 
-        <Footer />
       </ElementStyleProvider>
     </DomProvider>
     </SessionProvider>

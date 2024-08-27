@@ -5,7 +5,7 @@ import { useElementStyleContext } from '@/context/ElementStyleContext';
 const DomRenderer = () => {
   const { domJson, dispatch } = useDomContext();
   const { elementState, setElementState } = useElementStyleContext();
-  const [hoveredElementId, setHoveredElementId] = useState(null);
+  const [ hoveredElementId, setHoveredElementId ] = useState(null);
 
   const handleElementClick = (event, elementId, parentElement = null) => {
     event.stopPropagation();
