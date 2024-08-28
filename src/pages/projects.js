@@ -93,15 +93,23 @@ export default function Projects() {
 
 
       <div className='container mx-auto py-8 px-4'>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">My Projects</h1>
-          <button 
-            className="btn btn-primary"
-            onClick={() => document.getElementById('my_modal_2').showModal()}
-          >
-            Add New Project
-          </button>
+        <div className="flex justify-between mb-6">
+          <h1 className="text-2xl justify-start font-bold">My Projects</h1>
+          <div className='p-2 flex gap-2'>
+            <Link href={"/convert"}>
+              <button className="btn btn-primary">
+                Convert
+              </button>
+            </Link>
+            <button 
+              className="btn btn-primary"
+              onClick={() => document.getElementById('my_modal_2').showModal()}
+            >
+              Add New Project
+            </button>
+          </div>
         </div>
+
 
         <dialog id="my_modal_2" className="modal">
   <div className="modal-box">

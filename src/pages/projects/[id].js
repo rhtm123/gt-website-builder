@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import AlertContainer from '@/components/AlertContainer';
 import PreviewRenderer from '@/components/PreviewRenderer';
+import GenerateHtmlButton from '@/components/GenerateHtmlButton';
 
 import Head from 'next/head';
 
@@ -132,40 +133,40 @@ const InsertButtonComponent = () => {
   );
 };
 
-const jsonToHtml = (element) => {
-  const { type, attributes, children, value, styles } = element;
+// const jsonToHtml = (element) => {
+//   const { type, attributes, children, value, styles } = element;
 
-  if (type === 'text') {
-    return value; // Directly return text node value
-  }
+//   if (type === 'text') {
+//     return value; // Directly return text node value
+//   }
 
-  const styleClassName = Object.values(styles || {}).join(' ');
+//   const styleClassName = Object.values(styles || {}).join(' ');
 
-  const combinedClassName = [attributes?.className, styleClassName]
-    .filter(Boolean)
-    .join(' ');
+//   const combinedClassName = [attributes?.className, styleClassName]
+//     .filter(Boolean)
+//     .join(' ');
 
-  const attributesString = Object.entries({ ...attributes, className: combinedClassName })
-    .filter(([key, val]) => val)
-    .map(([key, val]) => `${key}="${val}"`)
-    .join(' ');
+//   const attributesString = Object.entries({ ...attributes, className: combinedClassName })
+//     .filter(([key, val]) => val)
+//     .map(([key, val]) => `${key}="${val}"`)
+//     .join(' ');
 
-  const childrenHtml = (children || []).map(jsonToHtml).join('');
+//   const childrenHtml = (children || []).map(jsonToHtml).join('');
 
-  return `<${type} ${attributesString}>${childrenHtml}</${type}>`;
-};
+//   return `<${type} ${attributesString}>${childrenHtml}</${type}>`;
+// };
 
-const GenerateHtmlButton = () => {
-  const { domJson } = useDomContext();
+// const GenerateHtmlButton = () => {
+//   const { domJson } = useDomContext();
 
-  const generateHtml = () => {
-    const htmlString = jsonToHtml(domJson);
-    console.log(htmlString);
-    console.log(domJson);
-  };
+//   const generateHtml = () => {
+//     const htmlString = jsonToHtml(domJson);
+//     console.log(htmlString);
+//     console.log(domJson);
+//   };
 
-  return <button className="btn btn-sm btn-secondary" onClick={generateHtml}>Generate HTML</button>;
-};
+//   return <button className="btn btn-sm btn-secondary" onClick={generateHtml}>Generate HTML</button>;
+// };
 
 const Project = ({ data, error }) => {
   const { data: session } = useSession();
