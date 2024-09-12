@@ -31,7 +31,7 @@ const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
 
     let all = data.all_values.split(',')
     if (prefix !== "") {
-      all = all.map(v => prefix + " " + v);
+      all = all.map(v => prefix + ":" + v);
     }
     // console.log(all)
     // console.log(all)

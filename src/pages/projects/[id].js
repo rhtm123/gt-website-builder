@@ -22,8 +22,8 @@ const InsertButtonComponent = ({setActiveTab}) => {
 
   const [jsonDoms, setJsonDoms] = React.useState([]);
 
-  const [selectedId, setSelectedId] = React.useState();
-  const [previewjson, setPreviewjson] = React.useState();
+  // const [selectedId, setSelectedId] = React.useState();
+  // const [previewjson, setPreviewjson] = React.useState();
 
   const getJsonDoms = async () => {
     try {
@@ -31,6 +31,8 @@ const InsertButtonComponent = ({setActiveTab}) => {
       let data = await myFetch(url);
       // console.log(data);
       setJsonDoms(data.results);
+      // JSON.parse(jsonDoms[id]?.jsondom)
+      console.log( JSON.parse(data.results[0].jsondom));
     } catch (e) {
       console.log("Failed to fetch");
     }
@@ -65,28 +67,25 @@ const InsertButtonComponent = ({setActiveTab}) => {
     });
   };
 
-  const previewBuilder = (id) => {
+  // const previewBuilder = (id) => {
+  //   // setSelectedJsonDom(null);
+  //   document.getElementById("model1").showModal();
+  //   // setSelectedJsonDom(jsonDoms[id]);
+  // }
 
-    // setSelectedJsonDom(null);
-    document.getElementById("model1").showModal();
+  // const [isOpen, setIsOpen] = React.useState(false);
 
-
-    // setSelectedJsonDom(jsonDoms[id]);
-  }
-
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  const toggleModal = (id) => {
-    if (!isOpen){
-      setPreviewjson(null);
-      console.log(id);
-      setSelectedId(id)
-      // let jsondom = jsonDoms[id]?.jsondom;
-      const newElement = JSON.parse(jsonDoms[id]?.jsondom);
-      setPreviewjson(newElement);
-    }
-    setIsOpen(!isOpen);
-  };
+  // const toggleModal = (id) => {
+  //   if (!isOpen){
+  //     setPreviewjson(null);
+  //     console.log(id);
+  //     setSelectedId(id)
+  //     // let jsondom = jsonDoms[id]?.jsondom;
+  //     const newElement = JSON.parse(jsonDoms[id]?.jsondom);
+  //     setPreviewjson(newElement);
+  //   }
+  //   setIsOpen(!isOpen);
+  // };
 
   return (
     <div className="">
@@ -99,8 +98,6 @@ const InsertButtonComponent = ({setActiveTab}) => {
             </div>
 
             <button onClick={() => insertElement(id)} className='btn btn-sm btn-outline'>Use this builder</button>
-
-
           </div>
           <hr className='my-2' />
 

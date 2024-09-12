@@ -205,7 +205,7 @@ export default function Projects() {
   </div>
 )}  
 
-      {projects.length === 0 && <div className="mt-6">No projects found.</div>}
+      {(!loading && projects.length === 0) && <div className="mt-6">No projects found.</div>}
 
 
       </div>
