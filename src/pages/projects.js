@@ -2,7 +2,7 @@ import { myFetch } from '@/utils/myFetch';
 import React from 'react';
 import Link from 'next/link';
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut} from "next-auth/react";
 import LoginRequired from '@/components/LoginRequired';
 import Loading from '@/components/Loading';
 import AlertContainer from '@/components/AlertContainer';
@@ -23,7 +23,7 @@ export default function Projects() {
   const getProjects = async () => {
     setLoading(true);
     try {
-      let url = process.env.API_URL + "api/builder/projects?page=1&page_size=10&creator_id=" + session?.user.id;
+      let url = process.env.API_URL + "api/builder/projects?page=1&page_size=10&creator_id=" + session?.user?.id;
       let data = await myFetch(url);
       setProjects(data.results);
       setNext(data.next);
@@ -36,6 +36,7 @@ export default function Projects() {
 
   React.useEffect(() => {
     if (session) {
+      // console.log(session);
       getProjects();
     }
   }, [session]);
@@ -106,6 +107,13 @@ export default function Projects() {
               onClick={() => document.getElementById('my_modal_2').showModal()}
             >
               Add Project +
+            </button>
+
+            <button 
+              className="btn btn-error font-bold"
+              onClick={() => signOut()}
+            >
+              Logout
             </button>
           </div>
         </div>

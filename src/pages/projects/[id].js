@@ -13,7 +13,7 @@ import AlertContainer from '@/components/AlertContainer';
 import PreviewRenderer from '@/components/PreviewRenderer';
 import GenerateHtmlButton from '@/components/GenerateHtmlButton';
 
-import Head from 'next/head';
+// import Head from 'next/head';
 
 
 const InsertButtonComponent = () => {
