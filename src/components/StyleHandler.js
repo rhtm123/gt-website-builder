@@ -17,10 +17,22 @@ const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
     setAllValues([]);
 
     try{
-    let url = process.env.API_URL + "api/builder/class-all-values/" + styleKey;
+    let v = styleKey.split(":");
+    let prefix = ""; let key = "";
+    if (v.length > 1) {
+      prefix = v[0];
+      key = v[1];
+    } else {
+      key = styleKey;
+    }
+    let url = process.env.API_URL + "api/builder/class-all-values/" + key;
+    // console.log(url);
     let data = await myFetch(url);
 
     let all = data.all_values.split(',')
+    if (prefix !== "") {
+      all = all.map(v => prefix + " " + v);
+    }
     // console.log(all)
     // console.log(all)
     setAllValues(all)
@@ -31,14 +43,14 @@ const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
   }
 
   React.useEffect(()=>{
-    console.log("Hello World!!!!!")
+    // console.log("Hello World!!!!!")
     fetchAllValues();
   },[elementState])
 
 
   const handleClick = (value) => {
     // setKey(k);
-    console.log(value);
+    // console.log(value);
 
     // console.log(styleKey, styleValue);
     let newStyles = { ...elementState.styles, [styleKey]: value };
@@ -58,12 +70,13 @@ const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
 
   // if (type === "select") {
     return (
-      <div>
+      <div className='border-1 bg-base-200 rounded-md p-1 m-1'>
         <label htmlFor={styleKey}>
-          {styleKey.charAt(0).toUpperCase() + styleKey.slice(1)}:
+          {styleKey}
         </label>
         <select
           value={selectvalue}
+          className='select select-bordered select-sm'
           onChange={(e) => handleClick(e.target.value)}
         >
           {allValues.map((opt, index) => (

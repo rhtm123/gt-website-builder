@@ -16,7 +16,7 @@ import GenerateHtmlButton from '@/components/GenerateHtmlButton';
 // import Head from 'next/head';
 
 
-const InsertButtonComponent = () => {
+const InsertButtonComponent = ({setActiveTab}) => {
   const { domJson, dispatch } = useDomContext();
   const idCounter = useRef(0);
 
@@ -57,6 +57,8 @@ const InsertButtonComponent = () => {
     const newElement = JSON.parse(jsondom);
     assignIdsRecursively(newElement);
 
+    setActiveTab("website");
+
     dispatch({
       type: 'ADD_ELEMENT_END',
       payload: { newElement },
@@ -79,8 +81,8 @@ const InsertButtonComponent = () => {
       setPreviewjson(null);
       console.log(id);
       setSelectedId(id)
-      let jsondom = jsonDoms[id]?.jsondom;
-      const newElement = JSON.parse(jsondom);
+      // let jsondom = jsonDoms[id]?.jsondom;
+      const newElement = JSON.parse(jsonDoms[id]?.jsondom);
       setPreviewjson(newElement);
     }
     setIsOpen(!isOpen);
@@ -90,83 +92,26 @@ const InsertButtonComponent = () => {
     <div className="">
       {jsonDoms.map((dom, id) => (
         <div key={id} className='bg-base-200 mb-4 rounded-lg p-2 w-full'>
-          <p className='font-bold uppercase'>{dom.name}</p>
-          <span className='opacity-90'>Creator: {dom.creator.username}</span>
-          <div className='flex justify-between py-1'>
-            <button className='btn btn-sm btn-outline' 
-            onClick={()=>toggleModal(id)}>
-  
-              Preview</button>
+          <div className='flex justify-between'>
+            <div>
+            <p className='font-bold uppercase'>{dom.name}</p>
+            <span className='opacity-90'>Creator: {dom.creator.first_name} {dom.creator.last_name}</span>
+            </div>
 
-            <button onClick={() => insertElement(id)} className='btn btn-sm btn-primary'>use</button>
+            <button onClick={() => insertElement(id)} className='btn btn-sm btn-outline'>Use this builder</button>
+
+
           </div>
+          <hr className='my-2' />
+
+          <PreviewRenderer domJson={JSON.parse(dom?.jsondom)} />
         </div>
       ))}
-
-{/* 
-      <button onClick={} className="btn btn-sm btn-primary">
-        Open Modal
-      </button> */}
-
-      
-      {isOpen && (
-        <div className="fixed z-50 m-0 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative max-h-screen overflow-auto bg-base-300 w-full max-w-none mx-4 md:mx-8 lg:mx-16 xl:mx-32 rounded-lg p-8">
-            {/* Close button */}
-            <button 
-              onClick={toggleModal} 
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            {previewjson && <PreviewRenderer domJson={previewjson} /> }
-
-          </div>
-        </div>
-      )}
-
       
     </div>
   );
 };
 
-// const jsonToHtml = (element) => {
-//   const { type, attributes, children, value, styles } = element;
-
-//   if (type === 'text') {
-//     return value; // Directly return text node value
-//   }
-
-//   const styleClassName = Object.values(styles || {}).join(' ');
-
-//   const combinedClassName = [attributes?.className, styleClassName]
-//     .filter(Boolean)
-//     .join(' ');
-
-//   const attributesString = Object.entries({ ...attributes, className: combinedClassName })
-//     .filter(([key, val]) => val)
-//     .map(([key, val]) => `${key}="${val}"`)
-//     .join(' ');
-
-//   const childrenHtml = (children || []).map(jsonToHtml).join('');
-
-//   return `<${type} ${attributesString}>${childrenHtml}</${type}>`;
-// };
-
-// const GenerateHtmlButton = () => {
-//   const { domJson } = useDomContext();
-
-//   const generateHtml = () => {
-//     const htmlString = jsonToHtml(domJson);
-//     console.log(htmlString);
-//     console.log(domJson);
-//   };
-
-//   return <button className="btn btn-sm btn-secondary" onClick={generateHtml}>Generate HTML</button>;
-// };
 
 const Project = ({ data, error }) => {
   const { data: session } = useSession();
@@ -178,6 +123,7 @@ const Project = ({ data, error }) => {
   const alertContainerRef = React.useRef();
 
   const [isCssLoaded, setIsCssLoaded] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState("website");
 
   React.useEffect(() => {
     const link = document.createElement('link');
@@ -249,47 +195,53 @@ const Project = ({ data, error }) => {
       <AlertContainer ref={alertContainerRef} />
 
       <div className='grid  md:grid-cols-6 divide-x divide-gray-300'>
-        <div className='col-span-1 max-h-screen overflow-auto'>
-          <div className='p-2'>
-            <h3 className="font-bold text-lg">Builders</h3>
-          </div>
 
-          <div className='p-2'>
-            <InsertButtonComponent />
-          </div>
+
+        <div className='col-span-5 h-screen overflow-auto'>
+        
+    
+            
+            {(!isCssLoaded) && <p className="text-center p-4 text-error">Loading CSS...</p>}
+
+            {(project && isCssLoaded) && <div>
+
+              <div className='flex justify-between sticky top-0 z-10	bg-base-300 p-2 border-b'>
+              
+              <div className='flex gap-2'> 
+              <button onClick={()=>setActiveTab("website")} className={activeTab == "website" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Website Preview</button>
+              <button onClick={()=>setActiveTab("builder")} className={activeTab == "builder" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Explore Builders</button>
+              </div>
+              <div>
+              <Link href="/projects">
+                <button className="btn btn-sm btn-outline md:mr-2">All Projects</button>
+              </Link>
+
+              <button className="btn btn-sm btn-primary md:mr-2" onClick={saveNow}>Save Now</button>
+              
+              <GenerateHtmlButton />
+            </div>
+            </div>
+
+
+            {activeTab == "builder" && <div>
+              <div className='p-2'>
+                <InsertButtonComponent setActiveTab={setActiveTab} />
+              </div>
+            </div>}
+
+            {activeTab == "website" && 
+            
+            <div className='p-4'>
+
+              <DomRenderer />
+
+            </div>}
+            
+            </div>
+            
+            }
         </div>
-
-        <div className='col-span-4 max-h-screen overflow-auto'>
-          
-
-
-          {(!isCssLoaded) && <p className="text-center p-4 text-error">Loading CSS...</p>}
-
-          
-          {(project && isCssLoaded) && <div >
-          
-          <div className='sticky top-0 z-10	bg-base-300 p-2 border-b'>
-          <Link href="/projects">
-            <button className="btn btn-sm btn-outline md:mr-2">All Projects</button>
-          </Link>
-
-          <button className="btn btn-sm btn-primary md:mr-2" onClick={saveNow}>Save Now</button>
-          
-          <GenerateHtmlButton />
-          </div>
-
-
-          <div className='p-4'>
-
-            <DomRenderer />
-
-          </div>
-          
-          </div>
-          
-          }
-        </div>
-        <div className='col-span-1 max-h-screen overflow-auto'>
+        <div className='col-span-1 h-screen overflow-auto'>
           <div className='p-2'>
           <h3 className="font-bold text-lg">Styles</h3>
           </div>
