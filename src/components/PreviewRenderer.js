@@ -24,7 +24,7 @@ const PreviewRenderer = ({domJson}) => {
     }
 
     if (type === 'img') {
-      return React.createElement(type, { key: id, ...attributes });
+      return React.createElement(type, { key: id, ...combinedAttributes });
     }
 
     const childrenElements = children?.map((child) => renderElement(child, element));
