@@ -18,7 +18,7 @@ export default function HomePage(){
             Experience the power of our website builder, designed for developers who love Tailwind CSS.
           </p>
           <Link href={"/projects"}>
-          <button className="btn btn-accent btn-lg shadow-lg transform hover:scale-105 transition-transform">
+          <button className="btn btn-accent btn shadow-lg transform hover:scale-105 transition-transform">
             Get Started Now
           </button>
           </Link>
@@ -37,7 +37,7 @@ export default function HomePage(){
   {/* Features Section */}
   <section className="py-24 md:py-36">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-4xl md:text-5xl font-extrabold mb-16 text-center">
+      <h2 className="text-4xl md:text-5xl text-base-100 font-extrabold mb-16 text-center">
         Key Features
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -64,7 +64,7 @@ export default function HomePage(){
             </svg>
             <h3 className="text-2xl font-bold">Pre-built Templates</h3>
           </div>
-          <p className="text-lg text-neutral-content">
+          <p className="text-lg">
             Start fast with a range of beautiful templates designed for different needs.
           </p>
         </div>
@@ -90,7 +90,7 @@ export default function HomePage(){
             </svg>
             <h3 className="text-2xl font-bold">Real-time Preview</h3>
           </div>
-          <p className="text-lg text-neutral-content">
+          <p className="text-lg">
             Watch your website come to life with instant updates as you make changes.
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function HomePage(){
             </svg>
             <h3 className="text-2xl font-bold">Drag-and-Drop Interface</h3>
           </div>
-          <p className="text-lg text-neutral-content">
+          <p className="text-lg">
             Seamlessly create your website by dragging and dropping elements into place.
           </p>
         </div>
@@ -132,16 +132,15 @@ export default function HomePage(){
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-base-content">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-base-100">
             Join Thousands of Developers
           </h2>
           <p className="text-xl text-neutral-content mb-8">
             Sign up now and start building websites like a pro.
           </p>
-            
-            <button className="btn btn-primary">
-              Join Discord
-            </button>
+          <a target="_blank" href="https://discord.com/invite/8jHuMEBVPV">
+          <button className="btn btn-secondary">Join Discord</button>
+          </a>
         </div>
         <div className="hidden md:block">
           <img

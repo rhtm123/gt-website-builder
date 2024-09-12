@@ -92,8 +92,8 @@ export default function Projects() {
       <AlertContainer ref={alertContainerRef} />
 
 
-      <div className='container mx-auto py-8 px-4'>
-        <div className="flex justify-between mb-6">
+      <div className='md:w-2/3 mx-auto py-8 px-4'>
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl justify-start font-bold">My Projects</h1>
           <div className='p-2 flex gap-2'>
             <Link href={"/convert"}>
@@ -102,10 +102,10 @@ export default function Projects() {
               </button>
             </Link>
             <button 
-              className="btn btn-primary"
+              className="btn btn-primary font-bold"
               onClick={() => document.getElementById('my_modal_2').showModal()}
             >
-              Add New Project
+              Add Project +
             </button>
           </div>
         </div>
@@ -166,12 +166,12 @@ export default function Projects() {
             {project.name}
           </Link>
           <div className="flex space-x-2">
-            <button 
+            {/* <button 
               className="btn btn-sm btn-warning"
               onClick={() => handleEditProject(project.id)}
             >
               Edit
-            </button>
+            </button> */}
             <button 
               className="btn btn-sm btn-error"
               onClick={() => handleDeleteProject(project.id)}
@@ -195,7 +195,9 @@ export default function Projects() {
       </div>
     )}
   </div>
-)}
+)}  
+
+      {projects.length === 0 && <div className="mt-6">No projects found.</div>}
 
 
       </div>
