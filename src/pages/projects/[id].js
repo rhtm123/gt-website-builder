@@ -32,7 +32,7 @@ const InsertButtonComponent = ({setActiveTab}) => {
       // console.log(data);
       setJsonDoms(data.results);
       // JSON.parse(jsonDoms[id]?.jsondom)
-      console.log( JSON.parse(data.results[0].jsondom));
+      // console.log( JSON.parse(data.results[0].jsondom));
     } catch (e) {
       console.log("Failed to fetch");
     }

@@ -7,6 +7,7 @@ import { myFetch } from '@/utils/myFetch';
 // InputField component
 const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
 
+  // console.log(styleKey, styleValue);
 
   const [allValues, setAllValues] = React.useState([]);
 
@@ -97,9 +98,7 @@ import { useDomContext } from "@/context/DomContext";
 // StyleHandler component
 export default function StyleHandler() {
   const { elementState } = useElementStyleContext();
-
-  const { domJson, dispatch } = useDomContext();
-
+  const { dispatch } = useDomContext();
 
   return (
     <>
