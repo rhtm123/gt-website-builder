@@ -28,7 +28,7 @@ const GenerateHtml = ({ htmlString, onClose }) => {
           <textarea
             readOnly
             value={htmlString}
-            className="w-full h-96 p-4 bg-gray-800 border border-gray-300 rounded-lg resize-none"
+            className="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none"
           />
           <button
             onClick={copyToClipboard}

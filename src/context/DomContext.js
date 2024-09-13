@@ -10,11 +10,11 @@ const SET_INITIAL_STATE = 'SET_INITIAL_STATE';
 
 
 const initialState = {
-  "type": "main",
+  "type": "div",
   "id": '1',
   "attributes": { "class": "" },
   "styles": {
-    "bg": "bg-base-100",
+
   },
   "children": [
   ],

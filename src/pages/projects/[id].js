@@ -90,16 +90,15 @@ const InsertButtonComponent = ({setActiveTab}) => {
   return (
     <div className="">
       {jsonDoms.map((dom, id) => (
-        <div key={id} className='bg-base-200 mb-4 rounded-lg p-2 w-full'>
-          <div className='flex justify-between'>
+        <div key={id} className='bg-base-200 mb-4 rounded-lg w-full'>
+          <div className='flex justify-between p-4 border-b border-gray-300'>
             <div>
-            <p className='font-bold uppercase'>{dom.name}</p>
+            <p className='font-bold uppercase'>{id+1}. {dom.name}</p>
             <span className='opacity-90'>Creator: {dom.creator.first_name} {dom.creator.last_name}</span>
             </div>
 
-            <button onClick={() => insertElement(id)} className='btn btn-sm btn-outline'>Use this builder</button>
+            <button onClick={() => insertElement(id)} className='btn btn-sm btn-outline'>Use this section</button>
           </div>
-          <hr className='my-2' />
 
           <PreviewRenderer domJson={JSON.parse(dom?.jsondom)} />
         </div>
@@ -206,7 +205,7 @@ const Project = ({ data, error }) => {
               
               <div className='flex gap-2'> 
               <button onClick={()=>setActiveTab("website")} className={activeTab == "website" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Website Preview</button>
-              <button onClick={()=>setActiveTab("builder")} className={activeTab == "builder" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Explore Builders</button>
+              <button onClick={()=>setActiveTab("builder")} className={activeTab == "builder" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Explore Sections</button>
               </div>
               <div>
               <Link href="/projects">
