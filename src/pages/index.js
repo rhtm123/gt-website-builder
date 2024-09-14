@@ -1,10 +1,27 @@
 import Link from "next/link";
 import Footer from "../components/Footer";
 import Navbar from "@/components/Navbar";
+import Head from 'next/head';
+
 
 export default function HomePage() {
   return (
     <>
+      <Head>
+        <title>CraftMySite - Build Websites Effortlessly</title>
+        <meta name="description" content="Experience the power of our website builder, designed for developers who love Tailwind CSS." />
+        <meta name="keywords" content="website builder, Tailwind CSS, web development, responsive design, real-time preview" />
+        <meta name="author" content="GrowTech Lab" />
+        <meta property="og:title" content="CraftMySite - Build Websites Effortlessly" />
+        <meta property="og:description" content="Experience the power of our website builder, designed for developers who love Tailwind CSS." />
+        <meta property="og:image" content="/img/website.jpg" />
+        {/* <meta property="og:url" content="https://www.craftmysite.com" /> */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="CraftMySite - Build Websites Effortlessly" />
+        <meta name="twitter:description" content="Experience the power of our website builder, designed for developers who love Tailwind CSS." />
+        <meta name="twitter:image" content="/img/website.jpg" />
+        {/* <link rel="canonical" href="https://www.craftmysite.com" /> */}
+      </Head>
 
       <Navbar />
 
