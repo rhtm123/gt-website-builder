@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Link from 'next/link';
 
 const Footer = () => {
   useEffect(() => {
@@ -48,7 +49,7 @@ const Footer = () => {
 
         <nav>
           <h6 className="footer-title">Services</h6>
-          <a href="/projects" className="link link-hover">My Projects</a>
+          <Link href="/projects" className="link link-hover">My Projects</Link>
           {/* <a href="/add-problem" className="link link-hover">Add Coding Problem</a> */}
         </nav>
 
@@ -63,7 +64,7 @@ const Footer = () => {
         <nav>
           <h6 className="footer-title">Important Links</h6>
           {/* <a href="/about" className="link link-hover">About us</a> */}
-          <a href="/versions" className="link link-hover">App History</a>
+          <Link href="/versions" className="link link-hover">App History</Link>
         </nav>
       </footer>
 
