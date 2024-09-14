@@ -7,6 +7,8 @@ import { ElementStyleProvider } from "@/context/ElementStyleContext";
 import { SessionProvider } from "next-auth/react"
 
 import { ThemeProvider } from 'next-themes'
+import NextNProgress from 'nextjs-progressbar';
+
 
 // import Footer from "@/components/Footer";
 
@@ -14,7 +16,9 @@ import { ThemeProvider } from 'next-themes'
 
 function MyApp({ Component, pageProps }) {
   return (
+    <>
     <ThemeProvider>
+    <NextNProgress />
     <SessionProvider>
     <DomProvider>
       <ElementStyleProvider>
@@ -24,6 +28,8 @@ function MyApp({ Component, pageProps }) {
     </DomProvider>
     </SessionProvider>
     </ThemeProvider>
+    </>
+
   );
 }
 

@@ -97,11 +97,11 @@ export default function Projects() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl justify-start font-bold">My Projects</h1>
           <div className='p-2 flex gap-2'>
-            <Link href={"/convert"}>
+            {/* <Link href={"/convert"}>
               <button className="btn btn-primary">
                 Convert
               </button>
-            </Link>
+            </Link> */}
             <button 
               className="btn btn-primary font-bold"
               onClick={() => document.getElementById('my_modal_2').showModal()}
@@ -167,10 +167,10 @@ export default function Projects() {
     {projects.map((project, id) => (
       <div 
         key={id} 
-        className="p-4 border rounded-lg hover:shadow-lg transition-shadow"
+        className="p-4 border border-base-300 rounded-lg"
       >
         <div className="flex justify-between items-center">
-          <Link href={"/projects/" + project.id} className="text-lg font-semibold text-blue-600 hover:underline">
+          <Link href={"/projects/" + project.id} className="text-lg font-semibold text-primary hover:underline">
             {project.name}
           </Link>
           <div className="flex space-x-2">

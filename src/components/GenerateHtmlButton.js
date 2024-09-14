@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useDomContext } from '@/context/DomContext';
 import GenerateHtml from './GenerateHtml';
 
-const GenerateHtmlButton = () => {
+const GenerateHtmlButton = ({format="jsx"}) => {
   const { domJson } = useDomContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [htmlString, setHtmlString] = useState('');
@@ -13,7 +13,7 @@ const GenerateHtmlButton = () => {
     const { type, attributes, children, value, styles } = element;
 
     if (type === 'text') {
-      return value; // Directly return text node value
+      return value;
     }
 
     const styleClassName = Object.values(styles || {}).join(' ');
@@ -22,10 +22,18 @@ const GenerateHtmlButton = () => {
       .filter(Boolean)
       .join(' ');
 
-    const attributesString = Object.entries({ ...attributes, className: combinedClassName })
-      .filter(([key, val]) => val)
-      .map(([key, val]) => `${key}="${val}"`)
-      .join(' ');
+    let attributesString = '';
+    if (format === "jsx") {
+      attributesString = Object.entries({ ...attributes, className: combinedClassName })
+        .filter(([key, val]) => val)
+        .map(([key, val]) => `${key}="${val}"`)
+        .join(' ');
+    } else {
+      attributesString = Object.entries({ ...attributes, class: combinedClassName })
+        .filter(([key, val]) => val)
+        .map(([key, val]) => `${key}="${val}"`)
+        .join(' ');
+    }
 
     const childrenHtml = (children || []).map(jsonToHtml).join('');
 
@@ -42,9 +50,12 @@ const GenerateHtmlButton = () => {
 
   return (
     <>
-      <button className="btn btn-sm btn-secondary" onClick={generateHtml}>
+      {format==="html" && <button className="btn btn-sm btn-secondary" onClick={generateHtml}>
         Generate HTML
-      </button>
+      </button>}
+      {format==="jsx" && <button className="btn btn-sm btn-secondary" onClick={generateHtml}>
+        Generate JSX
+      </button>}
       {isModalOpen && (
         <GenerateHtml htmlString={htmlString} onClose={closeModal} />
       )}

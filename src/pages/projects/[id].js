@@ -10,8 +10,10 @@ import LoginRequired from '@/components/LoginRequired';
 import Link from 'next/link';
 
 import AlertContainer from '@/components/AlertContainer';
-import PreviewRenderer from '@/components/PreviewRenderer';
+// import PreviewRenderer from '@/components/PreviewRenderer';
 import GenerateHtmlButton from '@/components/GenerateHtmlButton';
+
+import SectionCollapse from '@/components/SectionCollapse';
 
 // import Head from 'next/head';
 
@@ -55,6 +57,7 @@ const InsertButtonComponent = ({setActiveTab}) => {
   };
 
   const insertElement = (id) => {
+    // console.log(id);
     let jsondom = jsonDoms[id].jsondom;
     const newElement = JSON.parse(jsondom);
     assignIdsRecursively(newElement);
@@ -88,20 +91,9 @@ const InsertButtonComponent = ({setActiveTab}) => {
   // };
 
   return (
-    <div className="">
+    <div className="p-4">
       {jsonDoms.map((dom, id) => (
-        <div key={id} className='bg-base-200 mb-4 rounded-lg w-full'>
-          <div className='flex justify-between p-4 border-b border-gray-300'>
-            <div>
-            <p className='font-bold uppercase'>{id+1}. {dom.name}</p>
-            <span className='opacity-90'>Creator: {dom.creator.first_name} {dom.creator.last_name}</span>
-            </div>
-
-            <button onClick={() => insertElement(id)} className='btn btn-sm btn-outline'>Use this section</button>
-          </div>
-
-          <PreviewRenderer domJson={JSON.parse(dom?.jsondom)} />
-        </div>
+        <SectionCollapse key={id} data={dom} insertElement={insertElement} id={id} />
       ))}
       
     </div>
@@ -213,24 +205,30 @@ const Project = ({ data, error }) => {
               </Link>
 
               <button className="btn btn-sm btn-primary md:mr-2" onClick={saveNow}>Save Now</button>
-              
-              <GenerateHtmlButton />
+              <span className='mr-2'>
+              <GenerateHtmlButton format="html" />
+              </span>
+
+              <GenerateHtmlButton format="jsx" />
             </div>
             </div>
 
 
             {activeTab == "builder" && <div>
-              <div className='p-2'>
+              <div className=''>
                 <InsertButtonComponent setActiveTab={setActiveTab} />
               </div>
             </div>}
 
             {activeTab == "website" && 
             
-            <div className='p-4'>
+            <div className='p-0 bg-base-100'>
 
               <DomRenderer />
 
+            <div className='flex justify-center opacity-10 hover:opacity-90'>
+              <button className='btn btn-sm btn-outline my-4' onClick={()=>setActiveTab("builder")}>Add New Section</button>
+            </div>
             </div>}
             
             </div>
