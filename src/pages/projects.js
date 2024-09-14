@@ -7,6 +7,9 @@ import LoginRequired from '@/components/LoginRequired';
 import Loading from '@/components/Loading';
 import AlertContainer from '@/components/AlertContainer';
 
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+
 
 export default function Projects() {
   const [projects, setProjects] = React.useState([]);
@@ -89,14 +92,18 @@ export default function Projects() {
   }
 
   return (
+    <>
+
+    <Navbar />
     <LoginRequired>
+
       <AlertContainer ref={alertContainerRef} />
 
 
-      <div className='md:w-2/3 mx-auto py-8 px-4'>
+      <div className='md:w-2/3 min-h-screen  mx-auto py-8 px-4'>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl justify-start font-bold">My Projects</h1>
-          <div className='p-2 flex gap-2'>
+          <div className='p-0'>
             {/* <Link href={"/convert"}>
               <button className="btn btn-primary">
                 Convert
@@ -109,12 +116,6 @@ export default function Projects() {
               Add Project +
             </button>
 
-            <button 
-              className="btn btn-error font-bold"
-              onClick={() => signOut()}
-            >
-              Logout
-            </button>
           </div>
         </div>
 
@@ -210,5 +211,7 @@ export default function Projects() {
 
       </div>
     </LoginRequired>
+    <Footer />
+    </>
   );
 }

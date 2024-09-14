@@ -1,29 +1,16 @@
 import Link from "next/link";
+import Footer from "../components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
   return (
     <>
-      <nav className="bg-gradient-to-r from-primary to-secondary shadow-lg">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-2">
-            <div className="flex items-center">
-              <img src="/img/logo.png" alt="Logo" className="h-8 w-8 mr-2 fill-base-100	" />
-              <span className="text-xl font-bold text-base-100">CraftMySite</span>
-            </div>
-            <div>
-              <Link href="/projects">
-                <button className="btn font-bold btn-outline text-base-100">
-                  My Projects
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+
+      <Navbar />
 
       <div className="bg-base-100">
         {/* Hero Section */}
-        <section className="py-24 md:py-36 bg-gradient-to-r from-primary to-secondary">
+        <section className="py-12 md:py-24 bg-gradient-to-r from-primary to-secondary">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
@@ -169,7 +156,7 @@ export default function HomePage() {
       ))}
     </div>
 
-    <div className="mt-16 flex justify-center">
+    <div className="mt-12 flex justify-center">
       <Link href="/projects">
         <button className="btn btn-primary shadow-lg px-8 py-4 transition-transform hover:scale-105">
           Start Building Now
@@ -190,7 +177,7 @@ export default function HomePage() {
                   Join Thousands of Developers
                 </h2>
                 <p className="text-xl mb-8">
-                  Sign up now and start building websites like a pro.
+                Connect with like-minded developers, share your journey, and get support on our Discord server.
                 </p>
                 <a target="_blank" href="https://discord.com/invite/8jHuMEBVPV">
                   <button className="btn btn-secondary">Join Discord</button>
@@ -207,6 +194,8 @@ export default function HomePage() {
           </div>
         </section>
       </div>
+
+      <Footer />
     </>
   );
 }
