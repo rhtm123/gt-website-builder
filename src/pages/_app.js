@@ -17,7 +17,10 @@ import NextNProgress from 'nextjs-progressbar';
 function MyApp({ Component, pageProps }) {
   return (
     <>
-    <ThemeProvider>
+    <ThemeProvider
+    enableSystem = {false}
+    
+    >
     <NextNProgress />
     <SessionProvider>
     <DomProvider>
