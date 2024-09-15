@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const VersionHistory = () => {
   const [versions, setVersions] = useState([]);
@@ -46,11 +48,15 @@ const VersionHistory = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-100 py-12 px-4 sm:px-6 lg:px-8">
-      <Head>
+    <>
+    <Navbar />
+    <Head>
         <title>App Version History</title>
         <meta name="description" content="Version history of our app" />
       </Head>
+
+    <div className="min-h-screen bg-base-100 py-12 px-4 sm:px-6 lg:px-8">
+      
 
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-base-content mb-8">Version History</h1>
@@ -60,14 +66,21 @@ const VersionHistory = () => {
             <div key={version.id} className="card bg-base-200 shadow-xl">
               <div className="card-body">
                 <h3 className="card-title text-primary">
-                  Version {version.name}
+                  {version.name}
                 </h3>
-                <p className="text-sm text-base-content/70">
-                  Released on {new Date(version.release_date).toLocaleDateString()}
-                </p>
-                <div className="divider"></div>
+                
+                { version.is_published ?
+            <div className="flex items-stretch gap-1 ">
+            <p className="opacity-80 font-semibold ">Release Date: {version.release_date}</p>
+            <span className="badge badge-success">Published</span>
+            </div>
+              :
+            <div className="flex items-stretch gap-1 ">
+            <p className="opacity-80 font-semibold">Release Date: {version.release_date} 
+              <span className="badge badge-info">Working</span></p>
+            </div>
+            }
                 <div>
-                  <h4 className="font-medium text-base-content mb-2">Changes</h4>
                   <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: version.detail }} />
                 </div>
               </div>
@@ -98,6 +111,9 @@ const VersionHistory = () => {
         )}
       </div>
     </div>
+    <Footer />
+    </>
+
   );
 };
 
