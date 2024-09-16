@@ -7,6 +7,8 @@ const CHANGE_ELEMENT_STYLE = 'CHANGE_ELEMENT_STYLE';
 const UPDATE_TEXT_NODE = 'UPDATE_TEXT_NODE';  // New action type
 
 const SET_INITIAL_STATE = 'SET_INITIAL_STATE';
+const DELETE_ELEMENT = 'DELETE_ELEMENT';  // New action type
+
 
 
 const initialState = {
@@ -34,6 +36,10 @@ const domReducer = (state, action) => {
 
     case UPDATE_TEXT_NODE:
       return updateTextNode(state, action.payload.id, action.payload.value);
+
+    case DELETE_ELEMENT:
+      return deleteElement(state, action.payload.id);  // Handle delete action
+  
 
     case SET_INITIAL_STATE:
         return action.payload.newState; // Replace the current state with the new state
@@ -118,6 +124,27 @@ const updateTextNode = (state, targetId, newTextValue) => {
   return newState;
 };
 
+const deleteElement = (state, targetId) => {
+  const newState = JSON.parse(JSON.stringify(state));
+
+  const findAndDelete = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].id === targetId) {
+        children.splice(i, 1);
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndDelete(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndDelete(newState.children);
+  return newState;
+};
 
 // Create the context
 const DomContext = createContext();

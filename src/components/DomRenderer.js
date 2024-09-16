@@ -34,6 +34,8 @@ const DomRenderer = () => {
     });
   };
 
+
+
   const renderElement = (element, parentElement = null) => {
     const { type, attributes, children, value, id, styles } = element;
 
@@ -41,9 +43,9 @@ const DomRenderer = () => {
     const isHovered = hoveredElementId === id;
 
     const borderClass = isSelected
-      ? 'border border-blue-500'
+      ? 'border-2 border-blue-500'
       : isHovered
-      ? 'border border-blue-300'
+      ? 'border-2 border-blue-300'
       : '';
 
     const className = [Object.values(styles || {}).join(' '), borderClass].filter(Boolean).join(' ');
@@ -56,6 +58,15 @@ const DomRenderer = () => {
       onMouseLeave: () => setHoveredElementId(null),
     };
 
+    const deleteButton = isSelected ? (
+      <button
+        onClick={(e) => handleDeleteClick(e, id)}
+        className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+      >
+        Delete
+      </button>
+    ) : null;
+
     if (type === 'text') {
       return (
         <span
@@ -66,6 +77,8 @@ const DomRenderer = () => {
           {...combinedAttributes}
         >
           {value}
+          {/* {deleteButton} */}
+
         </span>
       );
     }
