@@ -5,12 +5,9 @@ import { useSession, signIn } from "next-auth/react";
 
 import Loading from './Loading';
 
-
-
 const LoginRequired = ({ children }) => {
 
   const { data: session } = useSession()
-
 
   // Replace this with your actual authentication check
   const isAuthenticated = () => {
@@ -25,10 +22,14 @@ const LoginRequired = ({ children }) => {
   }, [session]);
 
   return isAuthenticated() ? (
-    <div className="">
+    <>
       {children}
-    </div>
-  ) : <Loading />;
+    </>
+  ) :
+  <div className='flex justify-center items-center h-screen'>
+  <Loading />
+  </div> 
+  ;
 };
 
 export default LoginRequired;
