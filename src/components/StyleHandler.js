@@ -131,14 +131,14 @@ export default function StyleHandler() {
   const { elementState, setElementState } = useElementStyleContext();
   const { dispatch } = useDomContext();
 
-  const handleDeleteClick = (event, elementId) => {
-    event.stopPropagation();
-    setElementState({ styles: {}, elementId: null });
-    dispatch({
-      type: 'DELETE_ELEMENT',
-      payload: { id: elementId },
-    });
-  };
+  // const handleDeleteClick = (event, elementId) => {
+  //   event.stopPropagation();
+  //   setElementState({ styles: {}, elementId: null });
+  //   dispatch({
+  //     type: 'DELETE_ELEMENT',
+  //     payload: { id: elementId },
+  //   });
+  // };
 
   if (elementState.elementId === null) {
     return null;
@@ -146,12 +146,12 @@ export default function StyleHandler() {
 
   return (
     <>
-      <button
+      {/* <button
         onClick={(e) => handleDeleteClick(e, elementState.elementId)}
         className="btn btn-sm btn-error rounded absolute top-2 right-2"
       >
         Delete
-      </button>
+      </button> */}
 
       {Object.entries(elementState?.styles).map(([styleKey, styleValue], index) => (
         <InputField

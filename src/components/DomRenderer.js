@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useDomContext } from '@/context/DomContext';
 import { useElementStyleContext } from '@/context/ElementStyleContext';
+import { AiOutlineDelete } from "react-icons/ai";
+
+import { FiArrowUpLeft } from "react-icons/fi";
+
+
+import { FiArrowDownRight } from "react-icons/fi";
+
 
 const DomRenderer = () => {
   const { domJson, dispatch } = useDomContext();
   const { elementState, setElementState } = useElementStyleContext();
-  const [ hoveredElementId, setHoveredElementId ] = useState(null);
+  const [hoveredElementId, setHoveredElementId] = useState(null);
 
   const handleElementClick = (event, elementId, parentElement = null) => {
     event.stopPropagation();
@@ -34,9 +41,34 @@ const DomRenderer = () => {
     });
   };
 
+  const handleDeleteClick = (event, elementId) => {
+    event.stopPropagation();
+    setElementState({ styles: {}, elementId: null });
+    dispatch({
+      type: 'DELETE_ELEMENT',
+      payload: { id: elementId },
+    });
+  };
 
+  const handleMoveUp = (event, elementId) => {
+    event.stopPropagation();
+    console.log("handleMoveUp")
+    dispatch({
+      type: 'MOVE_ELEMENT_UP',
+      payload: { id: elementId },
+    });
+  };
 
-  const renderElement = (element, parentElement = null) => {
+  const handleMoveDown = (event, elementId) => {
+    console.log("handleMoveDown")
+    event.stopPropagation();
+    dispatch({
+      type: 'MOVE_ELEMENT_DOWN',
+      payload: { id: elementId },
+    });
+  };
+
+  const renderElement = (element, parentElement = null, index = 0, totalChildren = 0) => {
     const { type, attributes, children, value, id, styles } = element;
 
     const isSelected = elementState?.elementId === id;
@@ -48,7 +80,9 @@ const DomRenderer = () => {
       ? 'border-2 border-blue-300'
       : '';
 
-    const className = [Object.values(styles || {}).join(' '), borderClass].filter(Boolean).join(' ');
+    const className = [Object.values(styles || {}).join(' '), borderClass]
+      .filter(Boolean)
+      .join(' ');
 
     const combinedAttributes = {
       ...attributes,
@@ -58,13 +92,45 @@ const DomRenderer = () => {
       onMouseLeave: () => setHoveredElementId(null),
     };
 
-    const deleteButton = isSelected ? (
-      <button
-        onClick={(e) => handleDeleteClick(e, id)}
-        className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+    // Conditionally render Move buttons
+    const controlButtons = isSelected ? (
+      <span
+        style={{
+          position: 'absolute',
+          top: '-22px',
+          right: '0',
+          zIndex: 1000,
+          display: 'flex',
+          gap: '2px',
+        }}
       >
-        Delete
-      </button>
+        {index > 0 && (
+          <button
+            onClick={(e) => handleMoveUp(e, id)}
+            className="text-sm bg-primary text-white p-1 rounded"
+          >
+            <FiArrowUpLeft />
+
+          </button>
+        )}
+        {index < totalChildren - 1 && (
+          <button
+            onClick={(e) => handleMoveDown(e, id)}
+            className="text-sm bg-primary text-white p-1 rounded"
+          >
+            <FiArrowDownRight />
+
+          </button>
+        )}
+        <button
+          onClick={(e) => handleDeleteClick(e, id)}
+          className="text-sm bg-error text-white p-1 rounded"
+        >
+          <AiOutlineDelete />
+
+
+        </button>
+      </span>
     ) : null;
 
     if (type === 'text') {
@@ -74,22 +140,34 @@ const DomRenderer = () => {
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => handleTextChange(e, id)}
+          style={{ position: 'relative' }}
           {...combinedAttributes}
         >
           {value}
-          {/* {deleteButton} */}
-
+          {controlButtons}
         </span>
       );
     }
 
     if (type === 'img') {
-      return React.createElement(type, { key: id, ...combinedAttributes });
+      return (
+        <span style={{ position: 'relative' }} key={id}>
+          {React.createElement(type, { ...combinedAttributes })}
+          {controlButtons}
+        </span>
+      );
     }
 
-    const childrenElements = children?.map((child) => renderElement(child, element));
+    const childrenElements = children?.map((child, i) =>
+      renderElement(child, element, i, children.length)
+    );
 
-    return React.createElement(type, { key: id, ...combinedAttributes }, childrenElements);
+    return React.createElement(
+      type,
+      { key: id, style: { position: 'relative' }, ...combinedAttributes },
+      childrenElements,
+      controlButtons
+    );
   };
 
   return <>{renderElement(domJson)}</>;

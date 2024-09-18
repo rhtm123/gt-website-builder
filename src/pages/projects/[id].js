@@ -196,20 +196,24 @@ const Project = ({ data, error }) => {
               <div className='flex justify-between sticky top-0 z-10	bg-base-300 p-2 border-b'>
               
               <div className='flex gap-2'> 
-              <button onClick={()=>setActiveTab("website")} className={activeTab == "website" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Website Preview</button>
-              <button onClick={()=>setActiveTab("builder")} className={activeTab == "builder" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm btn-outline'}>Explore Sections</button>
+              <button onClick={()=>setActiveTab("website")} className={activeTab == "website" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm'}>Website Preview</button>
+              <button onClick={()=>setActiveTab("builder")} className={activeTab == "builder" ? 'btn btn-sm btn-outline text-success' : 'btn btn-sm'}>Explore Sections</button>
               </div>
               <div>
               <Link href="/projects">
-                <button className="btn btn-sm btn-outline md:mr-2">All Projects</button>
+                <button className="btn btn-sm  md:mr-2">All Projects</button>
               </Link>
 
-              <button className="btn btn-sm btn-primary md:mr-2" onClick={saveNow}>Save Now</button>
               <span className='mr-2'>
               <GenerateHtmlButton format="html" />
               </span>
 
+              <span className='mr-2'>
               <GenerateHtmlButton format="jsx" />
+              </span>
+
+              <button className="btn btn-sm btn-success" onClick={saveNow}>Save Now</button>
+
             </div>
             </div>
 
@@ -236,8 +240,8 @@ const Project = ({ data, error }) => {
             }
         </div>
         <div className='col-span-1 h-screen overflow-auto'>
-          <div className='p-2'>
-          <h3 className="font-bold text-lg">Styles</h3>
+          <div className='p-2 bg-base-300 border-b'>
+            <div className='p-1 font-semibold bg-base-300'>Selected Styles</div>
           </div>
           <StyleHandler />
         </div>

@@ -1,25 +1,20 @@
-import React, { createContext, useContext, useState } from 'react';
-import {  useReducer } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
 const ADD_ELEMENT_END = 'ADD_ELEMENT_END';
 const ADD_ELEMENT_AFTER = 'ADD_ELEMENT_AFTER';
 const CHANGE_ELEMENT_STYLE = 'CHANGE_ELEMENT_STYLE';
-const UPDATE_TEXT_NODE = 'UPDATE_TEXT_NODE';  // New action type
-
+const UPDATE_TEXT_NODE = 'UPDATE_TEXT_NODE';
 const SET_INITIAL_STATE = 'SET_INITIAL_STATE';
-const DELETE_ELEMENT = 'DELETE_ELEMENT';  // New action type
-
-
+const DELETE_ELEMENT = 'DELETE_ELEMENT';
+const MOVE_ELEMENT_UP = 'MOVE_ELEMENT_UP';
+const MOVE_ELEMENT_DOWN = 'MOVE_ELEMENT_DOWN';
 
 const initialState = {
-  "type": "div",
-  "id": '1',
-  "attributes": { "class": "" },
-  "styles": {
-
-  },
-  "children": [
-  ],
+  type: 'div',
+  id: '1',
+  attributes: { class: '' },
+  styles: {},
+  children: [],
 };
 
 // Reducer function to manage state updates
@@ -38,15 +33,49 @@ const domReducer = (state, action) => {
       return updateTextNode(state, action.payload.id, action.payload.value);
 
     case DELETE_ELEMENT:
-      return deleteElement(state, action.payload.id);  // Handle delete action
-  
+      return deleteElement(state, action.payload.id);
 
     case SET_INITIAL_STATE:
-        return action.payload.newState; // Replace the current state with the new state
-  
+      return action.payload.newState;
+
+    case MOVE_ELEMENT_UP:
+      return moveElement(state, action.payload.id, 'UP');
+
+    case MOVE_ELEMENT_DOWN:
+      return moveElement(state, action.payload.id, 'DOWN');
+
     default:
       return state;
   }
+};
+
+// Helper function to move an element up or down
+const moveElement = (state, targetId, direction) => {
+  const newState = JSON.parse(JSON.stringify(state));
+
+  const findAndMove = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].id === targetId) {
+        if (direction === 'UP' && i > 0) {
+          // Swap with the previous element
+          [children[i - 1], children[i]] = [children[i], children[i - 1]];
+        } else if (direction === 'DOWN' && i < children.length - 1) {
+          // Swap with the next element
+          [children[i], children[i + 1]] = [children[i + 1], children[i]];
+        }
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndMove(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndMove(newState.children);
+  return newState;
 };
 
 // Helper function to add an element at the end of the children array
@@ -102,6 +131,7 @@ const changeElementStyle = (state, targetId, newStyles) => {
   return newState;
 };
 
+// Helper function to update text node
 const updateTextNode = (state, targetId, newTextValue) => {
   const newState = JSON.parse(JSON.stringify(state));
 
@@ -124,6 +154,7 @@ const updateTextNode = (state, targetId, newTextValue) => {
   return newState;
 };
 
+// Helper function to delete an element
 const deleteElement = (state, targetId) => {
   const newState = JSON.parse(JSON.stringify(state));
 
@@ -151,9 +182,7 @@ const DomContext = createContext();
 
 // Create a provider component
 export const DomProvider = ({ children }) => {
-  
   const [domJson, dispatch] = useReducer(domReducer, initialState);
-
 
   return (
     <DomContext.Provider value={{ domJson, dispatch }}>

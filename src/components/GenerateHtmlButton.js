@@ -50,10 +50,10 @@ const GenerateHtmlButton = ({format="jsx"}) => {
 
   return (
     <>
-      {format==="html" && <button className="btn btn-sm btn-secondary" onClick={generateHtml}>
+      {format==="html" && <button className="btn btn-sm " onClick={generateHtml}>
         Generate HTML
       </button>}
-      {format==="jsx" && <button className="btn btn-sm btn-secondary" onClick={generateHtml}>
+      {format==="jsx" && <button className="btn btn-sm " onClick={generateHtml}>
         Generate JSX
       </button>}
       {isModalOpen && (
