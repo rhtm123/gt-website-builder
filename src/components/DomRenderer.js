@@ -97,9 +97,9 @@ const DomRenderer = () => {
       <span
         style={{
           position: 'absolute',
-          top: '-22px',
+          top: '-10px',
           right: '0',
-          zIndex: 1000,
+          zIndex: 4,
           display: 'flex',
           gap: '2px',
         }}

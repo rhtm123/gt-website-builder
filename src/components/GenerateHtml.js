@@ -28,11 +28,11 @@ const GenerateHtml = ({ htmlString, onClose }) => {
           <textarea
             readOnly
             value={htmlString}
-            className="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none"
+            className="font-mono text-sm opacity-90 w-full h-96 p-4 border border-gray-300 rounded-lg resize-none"
           />
           <button
             onClick={copyToClipboard}
-            className="absolute bottom-4 right-4 btn btn-primary"
+            className="absolute bottom-4 right-4 btn btn-sm btn-primary"
           >
             {isCopied ? 'Copied!' : 'Copy to Clipboard'}
           </button>

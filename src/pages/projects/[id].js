@@ -226,7 +226,7 @@ const Project = ({ data, error }) => {
 
             {activeTab == "website" && 
             
-            <div className='p-0 bg-base-100'>
+            <div className='p-0 z-0 bg-base-100'>
 
               <DomRenderer />
 
