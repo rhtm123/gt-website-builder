@@ -63,7 +63,7 @@ const VersionHistory = () => {
         
         <div className="space-y-8">
           {versions.slice().reverse().map((version) => (
-            <div key={version.id} className="card bg-base-200 shadow-xl">
+            <div key={version.id} className="card bg-base-200">
               <div className="card-body">
                 <h3 className="card-title text-primary">
                   {version.name}
@@ -76,8 +76,8 @@ const VersionHistory = () => {
             </div>
               :
             <div className="flex items-stretch gap-1 ">
-            <p className="opacity-80 font-semibold">Release Date: {version.release_date} 
-              <span className="badge badge-info">Working</span></p>
+            <p className="opacity-80 font-semibold">Release Date: {version.release_date} </p>
+              <span className="badge badge-info">Working</span>
             </div>
             }
                 <div>

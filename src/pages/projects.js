@@ -26,7 +26,7 @@ export default function Projects() {
   const getProjects = async () => {
     setLoading(true);
     try {
-      let url = process.env.API_URL + "api/builder/projects?page=1&page_size=10&creator_id=" + session?.user?.id;
+      let url = process.env.API_URL + "api/builder/projects?page=1&page_size=10&ordering=-updated&creator_id=" + session?.user?.id;
       let data = await myFetch(url);
       setProjects(data.results);
       setNext(data.next);

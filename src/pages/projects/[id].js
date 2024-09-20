@@ -18,22 +18,22 @@ import SectionCollapse from '@/components/SectionCollapse';
 // import Head from 'next/head';
 
 
-const InsertButtonComponent = ({setActiveTab}) => {
+const GetSections = ({setActiveTab}) => {
   const { domJson, dispatch } = useDomContext();
   const idCounter = useRef(0);
 
-  const [jsonDoms, setJsonDoms] = React.useState([]);
+  const [sections, setSections] = React.useState([]);
 
   // const [selectedId, setSelectedId] = React.useState();
   // const [previewjson, setPreviewjson] = React.useState();
 
-  const getJsonDoms = async () => {
+  const getsections = async () => {
     try {
       let url = process.env.API_URL + "api/builder/builders?page=1&page_size=10";
       let data = await myFetch(url);
       // console.log(data);
-      setJsonDoms(data.results);
-      // JSON.parse(jsonDoms[id]?.jsondom)
+      setSections(data.results);
+      // JSON.parse(sections[id]?.jsondom)
       // console.log( JSON.parse(data.results[0].jsondom));
     } catch (e) {
       console.log("Failed to fetch");
@@ -41,7 +41,7 @@ const InsertButtonComponent = ({setActiveTab}) => {
   };
 
   React.useEffect(() => {
-    getJsonDoms();
+    getsections();
   }, []);
 
   const generateUniqueId = () => {
@@ -58,7 +58,7 @@ const InsertButtonComponent = ({setActiveTab}) => {
 
   const insertElement = (id) => {
     // console.log(id);
-    let jsondom = jsonDoms[id].jsondom;
+    let jsondom = sections[id].jsondom;
     const newElement = JSON.parse(jsondom);
     assignIdsRecursively(newElement);
 
@@ -70,29 +70,15 @@ const InsertButtonComponent = ({setActiveTab}) => {
     });
   };
 
-  // const previewBuilder = (id) => {
-  //   // setSelectedJsonDom(null);
-  //   document.getElementById("model1").showModal();
-  //   // setSelectedJsonDom(jsonDoms[id]);
-  // }
-
-  // const [isOpen, setIsOpen] = React.useState(false);
-
-  // const toggleModal = (id) => {
-  //   if (!isOpen){
-  //     setPreviewjson(null);
-  //     console.log(id);
-  //     setSelectedId(id)
-  //     // let jsondom = jsonDoms[id]?.jsondom;
-  //     const newElement = JSON.parse(jsonDoms[id]?.jsondom);
-  //     setPreviewjson(newElement);
-  //   }
-  //   setIsOpen(!isOpen);
-  // };
 
   return (
     <div className="p-4">
-      {jsonDoms.map((dom, id) => (
+
+      {sections.length === 0 && 
+        <span class="py-2 loading loading-dots loading-sm"></span>
+      }
+
+      {sections.map((dom, id) => (
         <SectionCollapse key={id} data={dom} insertElement={insertElement} id={id} />
       ))}
       
@@ -220,7 +206,7 @@ const Project = ({ data, error }) => {
 
             {activeTab == "builder" && <div>
               <div className=''>
-                <InsertButtonComponent setActiveTab={setActiveTab} />
+                <GetSections setActiveTab={setActiveTab} />
               </div>
             </div>}
 

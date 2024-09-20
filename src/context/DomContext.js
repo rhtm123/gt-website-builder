@@ -1,66 +1,249 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
+const MAX_HISTORY_LENGTH = 20;
+
+
+// Action types
 const ADD_ELEMENT_END = 'ADD_ELEMENT_END';
 const ADD_ELEMENT_AFTER = 'ADD_ELEMENT_AFTER';
 const CHANGE_ELEMENT_STYLE = 'CHANGE_ELEMENT_STYLE';
 const UPDATE_TEXT_NODE = 'UPDATE_TEXT_NODE';
-const SET_INITIAL_STATE = 'SET_INITIAL_STATE';
 const DELETE_ELEMENT = 'DELETE_ELEMENT';
+const CHANGE_ELEMENT_ATTRIBUTE = 'CHANGE_ELEMENT_ATTRIBUTE';
+const SET_INITIAL_STATE = 'SET_INITIAL_STATE';
+const UNDO = 'UNDO';
+const REDO = 'REDO';
 const MOVE_ELEMENT_UP = 'MOVE_ELEMENT_UP';
 const MOVE_ELEMENT_DOWN = 'MOVE_ELEMENT_DOWN';
 
+// Initial state
 const initialState = {
-  type: 'div',
-  id: '1',
-  attributes: { class: '' },
-  styles: {},
-  children: [],
+  current: {
+    type: 'div',
+    id: '1',
+    attributes: { class: '' },
+    styles: {},
+    children: [],
+  },
+  history: [],
+  future: [],
 };
 
-// Reducer function to manage state updates
+// Reducer function for managing DOM state
 const domReducer = (state, action) => {
   switch (action.type) {
     case ADD_ELEMENT_END:
-      return addElementAtEnd(state, action.payload.newElement);
+      return applyAction(state, action, addElementAtEnd);
 
     case ADD_ELEMENT_AFTER:
-      return addElementAfterId(state, action.payload.id, action.payload.newElement);
+      return applyAction(state, action, addElementAfterId);
 
     case CHANGE_ELEMENT_STYLE:
-      return changeElementStyle(state, action.payload.id, action.payload.styles);
+      return applyAction(state, action, changeElementStyle);
 
     case UPDATE_TEXT_NODE:
-      return updateTextNode(state, action.payload.id, action.payload.value);
+      return applyAction(state, action, updateTextNode);
 
     case DELETE_ELEMENT:
-      return deleteElement(state, action.payload.id);
+      // Save current state to history, but do not include the post-delete state
+      const newStateAfterDelete = deleteElement(state.current, action.payload);
+      return {
+        ...state,
+        history: [...state.history, state.current],
+        current: newStateAfterDelete,
+        future: [],
+      };
 
-    case SET_INITIAL_STATE:
-      return action.payload.newState;
+    case CHANGE_ELEMENT_ATTRIBUTE:
+      return applyAction(state, action, changeElementAttribute);
 
     case MOVE_ELEMENT_UP:
-      return moveElement(state, action.payload.id, 'UP');
+      return applyAction(state, action, moveElement, 'UP');
 
     case MOVE_ELEMENT_DOWN:
-      return moveElement(state, action.payload.id, 'DOWN');
+      return applyAction(state, action, moveElement, 'DOWN');
+
+    case SET_INITIAL_STATE:
+      return { ...state, current: action.payload.newState, history: [], future: [] };
+
+    case UNDO:
+      if (state.history.length === 0) return state;
+      const previous = state.history[state.history.length - 1];
+      const newHistory = state.history.slice(0, -1);
+      return {
+        ...state,
+        current: previous,
+        history: newHistory,
+        future: [state.current, ...state.future],
+      };
+
+    case REDO:
+      if (state.future.length === 0) return state;
+      const next = state.future[0];
+      const newFuture = state.future.slice(1);
+      return {
+        ...state,
+        current: next,
+        history: [...state.history, state.current],
+        future: newFuture,
+      };
 
     default:
       return state;
   }
 };
 
-// Helper function to move an element up or down
-const moveElement = (state, targetId, direction) => {
-  const newState = JSON.parse(JSON.stringify(state));
+// Helper function to apply an action and update the history with a max limit
+const applyAction = (state, action, handler, ...args) => {
+  const updatedCurrent = handler(state.current, action.payload, ...args);
+  console.log("APPLY FUNCTION CALLED")
+  
+  // Add the current state to history and apply MAX_HISTORY_LENGTH limit
+  let newHistory = [...state.history, state.current];
+  console.log("HISTORY LENGTH", newHistory.length);
+  
+  if (newHistory.length > MAX_HISTORY_LENGTH) {
+    newHistory = newHistory.slice(1); // Remove the oldest history item
+  }
+
+  return {
+    ...state,
+    history: newHistory,
+    future: [], // Clear the future after any new action
+    current: updatedCurrent,
+  };
+};
+
+// Specific helper functions for modifying the state
+const addElementAtEnd = (currentState, { newElement }) => {
+  const newState = { ...currentState, children: [...currentState.children, newElement] };
+  return newState;
+};
+
+const addElementAfterId = (currentState, { id, newElement }) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
+
+  const findAndInsert = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].id === id) {
+        children.splice(i + 1, 0, newElement);
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndInsert(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndInsert(newState.children);
+  return newState;
+};
+
+const changeElementStyle = (currentState, { id, styles }) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
+
+  const findAndUpdateStyle = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].id === id) {
+        children[i].styles = { ...children[i].styles, ...styles };
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndUpdateStyle(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndUpdateStyle(newState.children);
+  return newState;
+};
+
+const updateTextNode = (currentState, { id, value }) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
+
+  const findAndUpdateText = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].type === 'text' && children[i].id === id) {
+        children[i].value = value;
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndUpdateText(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndUpdateText(newState.children);
+  return newState;
+};
+
+const deleteElement = (currentState, { id }) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
+
+  const findAndDelete = (children) => {
+    if (!Array.isArray(children)) return false; // Ensure children is an array
+
+    for (let i = 0; i < children.length; i++) {
+      if (!children[i]) continue; // Skip undefined/null elements
+
+      if (children[i].id === id) {
+        children.splice(i, 1);
+        return true;
+      }
+
+      if (Array.isArray(children[i].children)) {
+        if (findAndDelete(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndDelete(newState.children);
+  return newState;
+};
+
+const changeElementAttribute = (currentState, { id, attributes }) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
+
+  const findAndUpdateAttribute = (children) => {
+    for (let i = 0; i < children.length; i++) {
+      if (children[i].id === id) {
+        children[i].attributes = { ...children[i].attributes, ...attributes };
+        return true;
+      }
+      if (children[i].children) {
+        if (findAndUpdateAttribute(children[i].children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  findAndUpdateAttribute(newState.children);
+  return newState;
+};
+
+const moveElement = (currentState, { id }, direction) => {
+  const newState = JSON.parse(JSON.stringify(currentState));
 
   const findAndMove = (children) => {
     for (let i = 0; i < children.length; i++) {
-      if (children[i].id === targetId) {
+      if (children[i].id === id) {
         if (direction === 'UP' && i > 0) {
-          // Swap with the previous element
           [children[i - 1], children[i]] = [children[i], children[i - 1]];
         } else if (direction === 'DOWN' && i < children.length - 1) {
-          // Swap with the next element
           [children[i], children[i + 1]] = [children[i + 1], children[i]];
         }
         return true;
@@ -78,114 +261,14 @@ const moveElement = (state, targetId, direction) => {
   return newState;
 };
 
-// Helper function to add an element at the end of the children array
-const addElementAtEnd = (state, newElement) => {
-  const newState = JSON.parse(JSON.stringify(state));
-  newState.children.push(newElement);
-  return newState;
-};
-
-// Helper function to add an element after a given ID
-const addElementAfterId = (state, targetId, newElement) => {
-  const newState = JSON.parse(JSON.stringify(state));
-
-  const findAndInsert = (children) => {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].id === targetId) {
-        children.splice(i + 1, 0, newElement);
-        return true;
-      }
-      if (children[i].children) {
-        if (findAndInsert(children[i].children)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  findAndInsert(newState.children);
-  return newState;
-};
-
-// Helper function to change the style of an element
-const changeElementStyle = (state, targetId, newStyles) => {
-  const newState = JSON.parse(JSON.stringify(state));
-
-  const findAndUpdateStyle = (children) => {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].id === targetId) {
-        children[i].styles = { ...children[i].styles, ...newStyles };
-        return true;
-      }
-      if (children[i].children) {
-        if (findAndUpdateStyle(children[i].children)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  findAndUpdateStyle(newState.children);
-  return newState;
-};
-
-// Helper function to update text node
-const updateTextNode = (state, targetId, newTextValue) => {
-  const newState = JSON.parse(JSON.stringify(state));
-
-  const findAndUpdateText = (children) => {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].type === 'text' && children[i].id === targetId) {
-        children[i].value = newTextValue;
-        return true;
-      }
-      if (children[i].children) {
-        if (findAndUpdateText(children[i].children)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  findAndUpdateText(newState.children);
-  return newState;
-};
-
-// Helper function to delete an element
-const deleteElement = (state, targetId) => {
-  const newState = JSON.parse(JSON.stringify(state));
-
-  const findAndDelete = (children) => {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].id === targetId) {
-        children.splice(i, 1);
-        return true;
-      }
-      if (children[i].children) {
-        if (findAndDelete(children[i].children)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  findAndDelete(newState.children);
-  return newState;
-};
-
-// Create the context
+// Context and provider for DOM state
 const DomContext = createContext();
 
-// Create a provider component
 export const DomProvider = ({ children }) => {
-  const [domJson, dispatch] = useReducer(domReducer, initialState);
+  const [state, dispatch] = useReducer(domReducer, initialState);
 
   return (
-    <DomContext.Provider value={{ domJson, dispatch }}>
+    <DomContext.Provider value={{ domJson: state.current, dispatch }}>
       {children}
     </DomContext.Provider>
   );

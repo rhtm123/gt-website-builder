@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { useDomContext } from '@/context/DomContext';
 import { useElementStyleContext } from '@/context/ElementStyleContext';
 import { AiOutlineDelete } from "react-icons/ai";
-
-import { FiArrowUpLeft } from "react-icons/fi";
-
-
-import { FiArrowDownRight } from "react-icons/fi";
-
+import { FiArrowUpLeft, FiArrowDownRight } from "react-icons/fi";
 
 const DomRenderer = () => {
   const { domJson, dispatch } = useDomContext();
@@ -42,6 +37,7 @@ const DomRenderer = () => {
   };
 
   const handleDeleteClick = (event, elementId) => {
+    console.log("DELETE CALLED");
     event.stopPropagation();
     setElementState({ styles: {}, elementId: null });
     dispatch({
@@ -52,7 +48,6 @@ const DomRenderer = () => {
 
   const handleMoveUp = (event, elementId) => {
     event.stopPropagation();
-    console.log("handleMoveUp")
     dispatch({
       type: 'MOVE_ELEMENT_UP',
       payload: { id: elementId },
@@ -60,12 +55,19 @@ const DomRenderer = () => {
   };
 
   const handleMoveDown = (event, elementId) => {
-    console.log("handleMoveDown")
     event.stopPropagation();
     dispatch({
       type: 'MOVE_ELEMENT_DOWN',
       payload: { id: elementId },
     });
+  };
+
+  const handleUndo = () => {
+    dispatch({ type: 'UNDO' });
+  };
+
+  const handleRedo = () => {
+    dispatch({ type: 'REDO' });
   };
 
   const renderElement = (element, parentElement = null, index = 0, totalChildren = 0) => {
@@ -110,7 +112,6 @@ const DomRenderer = () => {
             className="text-sm bg-primary text-white p-1 rounded"
           >
             <FiArrowUpLeft />
-
           </button>
         )}
         {index < totalChildren - 1 && (
@@ -119,7 +120,6 @@ const DomRenderer = () => {
             className="text-sm bg-primary text-white p-1 rounded"
           >
             <FiArrowDownRight />
-
           </button>
         )}
         <button
@@ -127,8 +127,6 @@ const DomRenderer = () => {
           className="text-sm bg-error text-white p-1 rounded"
         >
           <AiOutlineDelete />
-
-
         </button>
       </span>
     ) : null;
@@ -170,7 +168,25 @@ const DomRenderer = () => {
     );
   };
 
-  return <>{renderElement(domJson)}</>;
+
+
+  return (
+    <>
+    {/* <button
+          onClick={handleUndo}
+          className="btn btn-sm btn-secondary mr-2"
+        >
+          Undo
+        </button>
+        <button
+          onClick={handleRedo}
+          className="btn btn-sm btn-secondary"
+        >
+          Redo
+        </button> */}
+      {renderElement(domJson)}
+    </>
+  );
 };
 
 export default DomRenderer;
