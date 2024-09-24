@@ -109,9 +109,8 @@ const Project = ({ data, error }) => {
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
+    // window.addEventListener('resize', checkScreenSize);
+    // return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
 
