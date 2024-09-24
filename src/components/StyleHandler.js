@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useElementStyleContext } from "@/context/ElementStyleContext";
 
 import { myFetch } from '@/utils/myFetch';
@@ -96,7 +96,11 @@ const InputField = ({ styleKey, styleValue, elementState, dispatch }) => {
 
 
 const AttributeField = ({ attributeKey, attributeValue, elementState, dispatch }) => {
-  const [inputValue, setInputValue] = React.useState(attributeValue);
+  const [inputValue, setInputValue] = React.useState();
+
+  React.useEffect(()=>{
+    setInputValue(attributeValue);
+  },[elementState])
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -131,6 +135,10 @@ export default function StyleHandler() {
   const { elementState, setElementState } = useElementStyleContext();
   const { dispatch } = useDomContext();
 
+  React.useEffect(()=>{
+    // console.log(elementState);
+  },[])
+
 
 
   if (elementState.elementId === null) {
@@ -148,6 +156,22 @@ export default function StyleHandler() {
           elementState={elementState}
           dispatch={dispatch}
         />
+      ))}
+
+
+      <h3 className='text-lg font-bold py-2 px-2'>Attributes</h3>
+      {Object.entries(elementState?.attributes).map(([attributeKey, attributeValue], index) => (
+        <>
+        {/* {attributeKey!="class" && */}
+        <AttributeField
+          key={index}
+          attributeKey={attributeKey}
+          attributeValue={attributeValue}
+          elementState={elementState}
+          dispatch={dispatch}
+        />
+        {/* } */}
+        </>
       ))}
 
 

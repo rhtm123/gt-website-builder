@@ -1,5 +1,6 @@
 // pages/index.js
 import React from 'react';
+import { useCallback, useEffect } from 'react';
 import DomRenderer from '@/components/DomRenderer';
 import { useDomContext } from '@/context/DomContext';
 import StyleHandler from '@/components/StyleHandler';
@@ -9,13 +10,13 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import LoginRequired from '@/components/LoginRequired';
 import Link from 'next/link';
 
+import ScreenSizeMessage from '@/components/ScreenSizeMessage';
+
+
 import AlertContainer from '@/components/AlertContainer';
 // import PreviewRenderer from '@/components/PreviewRenderer';
 import GenerateHtmlButton from '@/components/GenerateHtmlButton';
-
 import SectionCollapse from '@/components/SectionCollapse';
-
-// import Head from 'next/head';
 
 
 const GetSections = ({setActiveTab}) => {
@@ -99,29 +100,48 @@ const Project = ({ data, error }) => {
   const [isCssLoaded, setIsCssLoaded] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("website");
 
+  const [isSmallScreen, setIsSmallScreen] = React.useState(false);
+
+
   React.useEffect(() => {
-    const link = document.createElement('link');
-    link.href = "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
-    link.rel = "stylesheet";
-    link.onload = () => {
-      setIsCssLoaded(true);
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 768); // Adjust this value as needed
     };
-    link.async = true;
-    document.head.appendChild(link);
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
 
-  // for daisyUI
+
   React.useEffect(() => {
-    const link = document.createElement('link');
-    link.href = "https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css";
-    link.rel = "stylesheet";
-    link.onload = () => {
+    const script = document.createElement('script');
+    script.src = "https://cdn.tailwindcss.com";
+    script.async = true;
+    document.head.appendChild(script);
+    // const link = document.createElement('link');
+    // link.href = "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
+    // link.rel = "stylesheet";
+    script.onload = () => {
       setIsCssLoaded(true);
     };
-    link.async = true;
-    document.head.appendChild(link);
+    document.head.appendChild(script);
   }, []);
+
+
+  // // for daisyUI
+  // React.useEffect(() => {
+  //   const link = document.createElement('link');
+  //   link.href = "https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css";
+  //   link.rel = "stylesheet";
+  //   link.onload = () => {
+  //     setIsCssLoaded(true);
+  //   };
+  //   link.async = true;
+  //   document.head.appendChild(link);
+  // }, []);
 
 
 
@@ -137,17 +157,64 @@ const Project = ({ data, error }) => {
     dispatch({ type: "SET_INITIAL_STATE", payload: { newState } });
   }, []);
 
-  const saveNow = async () => {
+  const saveNow = useCallback(async () => {
     let url = process.env.API_URL + `api/builder/projects/${project.id}/`;
-    try{
-    let data = await myFetch(url, "PUT", {
-      jsondom: JSON.stringify(domJson)
-    });
-    alertContainerRef.current.addAlert('Project is saved successfully', 'success');
+    alertContainerRef.current.addAlert('We are saving the project', 'success');
 
-    console.log("saved", data);
-    } catch (e) {} 
-  };
+    try {
+      let data = await myFetch(url, "PUT", {
+        jsondom: JSON.stringify(domJson)
+      });
+      alertContainerRef.current.addAlert('Project is saved successfully', 'success');
+      console.log("saved", data);
+    } catch (e) {
+      alertContainerRef.current.addAlert('Failed to save project', 'error');
+    }
+  }, [project.id, domJson]);
+
+  const handleUndo = useCallback(() => {
+    dispatch({ type: 'UNDO' });
+    alertContainerRef.current.addAlert('Undo action performed', 'info');
+  }, [dispatch]);
+
+  const handleRedo = useCallback(() => {
+    dispatch({ type: 'REDO' });
+    alertContainerRef.current.addAlert('Redo action performed', 'info');
+  }, [dispatch]);
+
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey || event.metaKey) {  // metaKey for Mac
+        switch (event.key.toLowerCase()) {
+          case 's':
+            event.preventDefault();
+            saveNow();
+            break;
+          case 'z':
+            event.preventDefault();
+            if (event.shiftKey) {
+              handleRedo();
+            } else {
+              handleUndo();
+            }
+            break;
+          case 'y':
+            event.preventDefault();
+            handleRedo();
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [saveNow, handleUndo, handleRedo]);
+
+
 
   if (!trueCreator){
     return (
@@ -166,17 +233,11 @@ const Project = ({ data, error }) => {
   return (
     <LoginRequired>
 
+      {isSmallScreen? <ScreenSizeMessage /> :<>
       <AlertContainer ref={alertContainerRef} />
-
       <div className='grid  md:grid-cols-6 divide-x divide-gray-300'>
-
-
         <div className='col-span-5 h-screen overflow-auto'>
-        
-    
-            
             {(!isCssLoaded) && <p className="text-center p-4 text-error">Loading CSS...</p>}
-
             {(project && isCssLoaded) && <div>
 
               <div className='flex justify-between sticky top-0 z-10	bg-base-300 p-2 border-b'>
@@ -232,6 +293,10 @@ const Project = ({ data, error }) => {
           <StyleHandler />
         </div>
       </div>
+
+      </>}
+
+
     </LoginRequired>
   );
 };

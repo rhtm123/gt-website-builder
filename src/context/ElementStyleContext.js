@@ -4,7 +4,7 @@ const ElementStyleContext = createContext();
 
 // Provider component
 export const ElementStyleProvider = ({ children }) => {
-  const [elementState, setElementState] = useState({ styles: {}, elementId: null });
+  const [elementState, setElementState] = useState({ styles: {}, attributes:{} ,elementId: null });
 
   return (
     <ElementStyleContext.Provider value={{ elementState, setElementState }}>

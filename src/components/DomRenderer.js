@@ -16,9 +16,9 @@ const DomRenderer = () => {
     const findElement = (element, parent = null) => {
       if (element.id === elementId) {
         if (element.type !== 'text') {
-          setElementState({ styles: element.styles, elementId: element.id });
+          setElementState({ styles: element.styles, attributes:element.attributes, elementId: element.id });
         } else if (parent) {
-          setElementState({ styles: parent.styles, elementId: parent.id });
+          setElementState({ styles: parent.styles, attributes:parent.attributes , elementId: parent.id });
         }
       } else if (element.children) {
         element.children.forEach((child) => findElement(child, element));

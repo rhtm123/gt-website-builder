@@ -16,7 +16,12 @@ const GenerateHtmlButton = ({ format = 'jsx' }) => {
       return `${indent}${value}`;
     }
 
-    const styleClassName = Object.values(styles || {}).join(' ');
+    let styleClassName = Object.values(styles || {}).join(' ');
+
+    if (attributes?.class) {
+      styleClassName += ` ${attributes.class}`;
+      // delete attributes.class;
+    }
 
     // Combine classes and styles properly
     const combinedClassName = [attributes?.className, styleClassName].filter(Boolean).join(' ');
@@ -27,6 +32,9 @@ const GenerateHtmlButton = ({ format = 'jsx' }) => {
       attributesString = Object.entries({ ...attributes, className: combinedClassName })
         .filter(([key, val]) => val)
         .map(([key, val]) => {
+          if (key==="class"){
+            return ""
+          }
           if (key === 'className') {
             return `className="${val}"`; // JSX requires className
           }

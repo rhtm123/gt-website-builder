@@ -18,6 +18,7 @@ export default function Projects() {
   const { data: session } = useSession();
   const [next, setNext] = React.useState();
   const [loadingMore, setLoadingMore] = React.useState(false);
+  const [creating, setCreating] = React.useState(false);
 
   const alertContainerRef = React.useRef();
 
@@ -63,6 +64,12 @@ export default function Projects() {
 
   const addProject = async () => {
     let url = process.env.API_URL + "api/builder/projects/";
+    setCreating(true);
+    
+    // alertContainerRef.current.addAlert('Creating Project', 'success');
+
+    try {
+    if (name.trim()) {
     let data = await myFetch(url, "POST", {
       "name": name,
       "creator": session.user.id,
@@ -72,6 +79,14 @@ export default function Projects() {
 
     document.getElementById('my_modal_2').close();
     getProjects();
+    } else {
+      alertContainerRef.current.addAlert('Project name is required', 'error');
+
+    }
+  } catch{(e)=> console.log()} finally{
+    setCreating(false);
+  }
+
   };
 
   const handleEditProject = async (project_id) => {
@@ -80,7 +95,22 @@ export default function Projects() {
     // console.log("handle it now");
   }
 
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter') {
+          if (name.trim()) {
+              addProject();
+          } else {
+              alertContainerRef.current.addAlert('Project name is required', 'error');
+              
+          }
+      }
+  };
+
   const handleDeleteProject = async (project_id) => {
+    // alertContainerRef.current.addAlert('Project Deleteding!', 'error');
+    setProjects([])
+    setLoading(true)
+
     let url = process.env.API_URL + `api/builder/projects/${project_id}/`;
     try{
       let data = await myFetch(url, "DELETE");
@@ -131,6 +161,7 @@ export default function Projects() {
       placeholder="Project Name" 
       className="input input-bordered w-full mb-4" 
       required
+      onKeyPress={handleKeyPress} // Trigger addProject on Enter
     />
 
     <div className="flex justify-end space-x-2">
@@ -140,18 +171,22 @@ export default function Projects() {
       >
         Cancel
       </button>
-      <button 
+      {!creating && <button 
         className='btn btn-primary' 
-        onClick={() => {
-          if (name.trim()) {
-            addProject();
-          } else {
-            alert("Project Name is required.");
-          }
-        }}
+        onClick={addProject}
       >
         Create
-      </button>
+      </button> }
+
+      {creating && 
+      <button className="btn btn-primary">
+      Creating
+      <span className="loading loading-spinner"></span>
+
+    </button>
+      }
+
+
     </div>
   </div>
   <form method="dialog" className="modal-backdrop">

@@ -94,11 +94,15 @@ const domReducer = (state, action) => {
 };
 
 // Helper function to apply an action and update the history with a max limit
+
 const applyAction = (state, action, handler, ...args) => {
-  const updatedCurrent = handler(state.current, action.payload, ...args);
-  console.log("APPLY FUNCTION CALLED")
-  
-  // Add the current state to history and apply MAX_HISTORY_LENGTH limit
+
+// Ensure that the updatedCurrent is correctly set and that the history is managed properly
+const updatedCurrent = handler(state.current, action.payload, ...args);
+console.log("APPLY FUNCTION CALLED");
+
+const actions = [DELETE_ELEMENT, ADD_ELEMENT_END, ADD_ELEMENT_AFTER, MOVE_ELEMENT_DOWN, MOVE_ELEMENT_UP];
+if (actions.includes(action.type)) {
   let newHistory = [...state.history, state.current];
   console.log("HISTORY LENGTH", newHistory.length);
   
@@ -112,6 +116,15 @@ const applyAction = (state, action, handler, ...args) => {
     future: [], // Clear the future after any new action
     current: updatedCurrent,
   };
+}
+
+return {
+  ...state,
+  history: [...state.history],
+  future: [],
+  current: updatedCurrent,
+};
+
 };
 
 // Specific helper functions for modifying the state

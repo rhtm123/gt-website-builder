@@ -18,7 +18,7 @@ const Alert = ({ message, type = 'info', duration = 3000, onClose }) => {
   };
 
   return (
-    <div className={`alert ${alertTypeClass[type]} shadow-lg`}>
+    <div className={`alert ${alertTypeClass[type]} shadow-lg py-2 text-base-200`}>
       <div>
         <span>{message}</span>
       </div>
