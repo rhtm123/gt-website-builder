@@ -24,22 +24,48 @@ const GetSections = ({setActiveTab}) => {
   const idCounter = useRef(0);
 
   const [sections, setSections] = React.useState([]);
+  const [next, setNext] = React.useState("");
+
+  const [loadingMore, setLoadingMore] = React.useState(false);
+
 
   // const [selectedId, setSelectedId] = React.useState();
   // const [previewjson, setPreviewjson] = React.useState();
 
   const getsections = async () => {
     try {
-      let url = process.env.API_URL + "api/builder/builders?page=1&page_size=10";
+      let url = process.env.API_URL + "api/builder/builders?is_published=true&page=1&page_size=10";
       let data = await myFetch(url);
       // console.log(data);
       setSections(data.results);
+      setNext(data.next);
       // JSON.parse(sections[id]?.jsondom)
       // console.log( JSON.parse(data.results[0].jsondom));
     } catch (e) {
       console.log("Failed to fetch");
     }
   };
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+
+
+    try {
+      let data1 = await myFetch(next);
+      setSections((oldArray) => [...oldArray, ...data1.results]);
+      // console.log(data);
+      // setSections(data.results);
+      setNext(data1.next);
+      // JSON.parse(sections[id]?.jsondom)
+      // console.log( JSON.parse(data.results[0].jsondom));
+    } catch (e) {
+      console.log("Failed to fetch");
+    } finally{
+      setLoadingMore(false)
+    }
+
+  };
+
 
   React.useEffect(() => {
     getsections();
@@ -82,6 +108,17 @@ const GetSections = ({setActiveTab}) => {
       {sections.map((dom, id) => (
         <SectionCollapse key={id} data={dom} insertElement={insertElement} id={id} />
       ))}
+
+        {loadingMore && (
+          <span className="loading loading-dots loading-md"></span>
+        )}
+        {(next && !loadingMore) && (
+          <div className="text-center">
+            <button onClick={() => loadMore()} className="my-4 btn btn-sm">
+              Load more
+            </button>
+          </div>
+        )}
       
     </div>
   );
