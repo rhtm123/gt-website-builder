@@ -145,6 +145,16 @@ const DomRenderer = () => {
         </span>
       );
     }
+
+    if (type === 'img') {
+      return (
+        <span style={{ position: 'relative' }} key={id}>
+          {React.createElement(type, { ...combinedAttributes })}
+          {controlButtons}
+        </span>
+      );
+    }
+
   
     if (type === 'input' || type === 'select' || type === 'textarea') {
       return (
