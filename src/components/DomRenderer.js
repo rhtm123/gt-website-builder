@@ -72,20 +72,20 @@ const DomRenderer = () => {
 
   const renderElement = (element, parentElement = null, index = 0, totalChildren = 0) => {
     const { type, attributes, children, value, id, styles } = element;
-
+  
     const isSelected = elementState?.elementId === id;
     const isHovered = hoveredElementId === id;
-
+  
     const borderClass = isSelected
       ? 'border-2 border-blue-500'
       : isHovered
       ? 'border-2 border-blue-300'
       : '';
-
+  
     const className = [Object.values(styles || {}).join(' '), borderClass]
       .filter(Boolean)
       .join(' ');
-
+  
     const combinedAttributes = {
       ...attributes,
       className: [attributes?.class, className].filter(Boolean).join(' '),
@@ -93,8 +93,7 @@ const DomRenderer = () => {
       onMouseEnter: () => setHoveredElementId(id),
       onMouseLeave: () => setHoveredElementId(null),
     };
-
-    // Conditionally render Move buttons
+  
     const controlButtons = isSelected ? (
       <span
         style={{
@@ -130,7 +129,7 @@ const DomRenderer = () => {
         </button>
       </span>
     ) : null;
-
+  
     if (type === 'text') {
       return (
         <span
@@ -146,20 +145,27 @@ const DomRenderer = () => {
         </span>
       );
     }
-
-    if (type === 'img') {
+  
+    if (type === 'input' || type === 'select' || type === 'textarea') {
       return (
-        <span style={{ position: 'relative' }} key={id}>
-          {React.createElement(type, { ...combinedAttributes })}
+        <span key={id} style={{ position: 'relative' }}>
+          <input
+            {...combinedAttributes}
+            value={attributes.value || value || ''}  // Control the value
+            onChange={(e) => dispatch({
+              type: 'UPDATE_INPUT_VALUE',
+              payload: { id, value: e.target.value },
+            })}  // Update state on change
+          />
           {controlButtons}
         </span>
       );
     }
-
+  
     const childrenElements = children?.map((child, i) =>
       renderElement(child, element, i, children.length)
     );
-
+  
     return React.createElement(
       type,
       { key: id, style: { position: 'relative' }, ...combinedAttributes },
@@ -167,23 +173,12 @@ const DomRenderer = () => {
       controlButtons
     );
   };
+  
 
 
 
   return (
     <>
-    {/* <button
-          onClick={handleUndo}
-          className="btn btn-sm btn-secondary mr-2"
-        >
-          Undo
-        </button>
-        <button
-          onClick={handleRedo}
-          className="btn btn-sm btn-secondary"
-        >
-          Redo
-        </button> */}
       {renderElement(domJson)}
     </>
   );
