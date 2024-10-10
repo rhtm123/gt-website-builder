@@ -29,7 +29,7 @@ const VersionHistory = () => {
   };
 
   useEffect(() => {
-    fetchVersions(process.env.API_URL +  'api/version/versions?app_name=builder');
+    fetchVersions(process.env.API_URL +  'api/version/versions?app_name=builder&ordering=-updated');
   }, []);
 
   const handleLoadMore = () => {
